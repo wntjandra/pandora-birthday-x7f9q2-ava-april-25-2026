@@ -26,18 +26,29 @@ const pageSpreads = [
     right: {
       eyebrow: 'The Awakening',
       title: 'The forest answered her first step.',
+      className: 'compact',
       blocks: [
         'She lay on a forest floor that shimmered beneath her, each breath sending blue and violet ripples through the moss.',
         'Particles drifted like slow stars. Towering trees rose above her, braided with glowing vines that swayed as if they were breathing.',
-        'Ava stood barefoot and stepped forward. The ground lit up beneath her, and soft waves of color spread outward. She smiled.',
       ],
-      footer: 'The world noticed her arrival',
+      footer: null,
     },
   },
   {
     left: {
+      eyebrow: 'The Awakening',
+      title: null,
+      className: 'continuation',
+      blocks: [
+        'Ava stood barefoot and stepped forward. The ground lit up beneath her.',
+        'Soft waves of color spread outward from where her foot touched, like the forest was responding to her presence.',
+        'Everything felt calm. Beautiful. Alive.',
+      ],
+      footer: 'The world noticed her arrival',
+    },
+    right: {
       eyebrow: 'Living World',
-      title: 'Everything felt calm. Beautiful. Alive.',
+      title: 'The world unfolded around her.',
       blocks: [
         'Massive mushroom forms rose in the distance, their glowing caps casting halos through the mist in pinks, purples, and blues.',
         'A nearby stream carried light inside it. When Ava dipped her hand into the water, the glow gathered around her fingers as if it recognized her.',
@@ -45,7 +56,9 @@ const pageSpreads = [
       ],
       footer: 'The world glowed back',
     },
-    right: {
+  },
+  {
+    left: {
       eyebrow: 'The Others',
       title: '"You are new."',
       className: 'compact',
@@ -56,9 +69,7 @@ const pageSpreads = [
       ],
       footer: 'Some friendships arrive gently',
     },
-  },
-  {
-    left: {
+    right: {
       eyebrow: 'A World of Wonder',
       title: 'They followed the glow together.',
       blocks: [
@@ -68,7 +79,9 @@ const pageSpreads = [
       ],
       footer: 'The forest kept unfolding',
     },
-    right: {
+  },
+  {
+    left: {
       eyebrow: 'The Ridge',
       title: '"It is always changing."',
       blocks: [
@@ -78,15 +91,25 @@ const pageSpreads = [
       ],
       footer: 'Wonder kept moving',
     },
+    right: {
+      eyebrow: 'The Bond',
+      title: 'Something in the sky called to her.',
+      className: 'compact',
+      blocks: [
+        'A distant cry echoed overhead. A creature soared above them, its wings long and elegant, trailing strokes of light through the air.',
+        'It circled once, then descended.',
+      ],
+      footer: null,
+    },
   },
   {
     left: {
       eyebrow: 'The Bond',
-      title: 'Something in the sky called to her.',
+      title: null,
+      className: 'continuation',
       blocks: [
-        'A distant cry echoed overhead. A creature soared above them, its wings long and elegant, trailing strokes of light through the air.',
-        'It circled once, then descended.',
         'Ava felt it before it landed: not fear, not surprise, but a quiet pull.',
+        'She stepped forward slowly, and the sky seemed to hold its breath with her.',
       ],
       footer: 'The sky answered back',
     },
@@ -327,7 +350,7 @@ const FlipBookPage = forwardRef(function FlipBookPage({ page }, ref) {
         <div className="cover-glow"></div>
         <div className="cover-rings"></div>
         <p className="cover-kicker cover-kicker-back">FOR AVA</p>
-        <h2 className="back-cover-title">Happy 20th Birthday, Ava.</h2>
+        <h2 className="back-cover-title">Happy 20th Birthday</h2>
         <p className="cover-copy cover-copy-back">
           The whole luminous world is still glowing for you.
         </p>
@@ -347,15 +370,18 @@ const FlipBookPage = forwardRef(function FlipBookPage({ page }, ref) {
   return (
     <article ref={ref} className={storyPageClassName} data-density="soft">
       <div className="flip-book-page-inner">
-        <p className="paper-eyebrow">{page.eyebrow}</p>
-        <h2>{page.title}</h2>
+        {page.eyebrow ? <p className="paper-eyebrow">{page.eyebrow}</p> : null}
+        {page.title ? <h2>{page.title}</h2> : null}
         <div className="paper-content">{page.blocks.map(renderPageBlock)}</div>
-        <div className="paper-footer-row">
-          <p className="paper-footer">{page.footer}</p>
-          <span className="paper-count">
-            {String(page.pageNumber).padStart(2, '0')} / {String(totalStoryPages).padStart(2, '0')}
-          </span>
-        </div>
+        {page.footer ? (
+          <div className="paper-footer-row">
+            <p className="paper-footer">{page.footer}</p>
+            <span className="paper-count">
+              {String(page.pageNumber).padStart(2, '0')} /{' '}
+              {String(totalStoryPages).padStart(2, '0')}
+            </span>
+          </div>
+        ) : null}
       </div>
     </article>
   )
