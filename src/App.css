@@ -440,11 +440,14 @@
 }
 
 .cover-title-ava {
-  color: #ffd46e;
+  color: rgba(255, 229, 182, 0.96);
+  text-decoration-line: underline;
+  text-decoration-color: rgba(255, 229, 182, 0.92);
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.11em;
   text-shadow:
-    0 0 18px rgba(255, 214, 120, 0.28),
-    0 0 34px rgba(255, 180, 69, 0.16),
-    0 0 28px rgba(82, 255, 233, 0.05);
+    0 0 18px rgba(255, 207, 122, 0.18),
+    0 0 30px rgba(82, 255, 233, 0.08);
 }
 
 .cover-title-rest {
