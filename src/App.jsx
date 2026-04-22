@@ -74,9 +74,10 @@ const pageSpreads = [
       title: 'Familiar Faces',
       className: 'compact',
       blocks: [
-        'Two figures stepped softly from between the glowing trees, their presence woven into the same quiet radiance that breathed through the forest.',
-        'They felt familiar. Like they belonged to this place, like something in her knew them.',
-        '"You\'ve arrived," one said gently, as though the moment had been long expected. "We\'ve been waiting," the other added, her voice calm and certain, like the world itself speaking through her. They turned, already knowing she would follow. "Come. There is more for you to see."',
+        'Two stepped softly from between the glowing trees, their presence part of the forest’s quiet light.',
+        'They felt familiar—like they had always been there.',
+        '"You’ve arrived," one said gently. "We’ve been waiting."',
+        'They turned, already knowing she would follow. "Come. There is more to see."',
       ],
       footer: 'Some friendships arrive gently',
     },
@@ -191,11 +192,11 @@ const pageSpreads = [
   {
     left: {
       eyebrow: 'The Return',
-      title: 'The Light Began to Fade',
+      title: 'Fading Light',
       blocks: [
         'The forest softened into twilight, its glow dimming into something quieter, more distant.',
         'Ava turned. The two figures stood a little farther now, already becoming part of the light they came from.',
-        'They met her gaze and smiled—soft, knowing, like nothing needed to be said.',
+        'They met her gaze and smiled softly, knowing that nothing needed to be said.',
         'And then, gently, they were gone.',
       ],
       footer: 'Not everything that fades is gone',
