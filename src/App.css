@@ -397,17 +397,17 @@
 }
 
 .cover-kicker-back {
-  margin-top: 26px;
+  margin-top: 12px;
 }
 
 .back-cover-title {
   position: relative;
   z-index: 1;
   width: min(380px, 100%);
-  margin-top: 92px;
+  margin-top: 56px;
   text-align: center;
   font-family: var(--display);
-  font-size: clamp(3rem, 6.6vw, 4.4rem);
+  font-size: clamp(2.6rem, 5.9vw, 3.9rem);
   line-height: 0.98;
   letter-spacing: 0.014em;
   color: #f7f1e3;
@@ -942,8 +942,8 @@
   }
 
   .back-cover-title {
-    margin-top: 76px;
-    font-size: clamp(2.5rem, 5.4vw, 3.8rem);
+    margin-top: 46px;
+    font-size: clamp(2.2rem, 4.9vw, 3.3rem);
   }
 }
 
@@ -1022,13 +1022,13 @@
 
   .back-cover-title {
     width: min(300px, 100%);
-    margin-top: 54px;
-    font-size: clamp(2rem, 8.6vw, 2.9rem);
+    margin-top: 34px;
+    font-size: clamp(1.82rem, 7.7vw, 2.55rem);
     letter-spacing: 0.01em;
   }
 
   .cover-kicker-back {
-    margin-top: 14px;
+    margin-top: 8px;
   }
 
   .cover-name-back {
