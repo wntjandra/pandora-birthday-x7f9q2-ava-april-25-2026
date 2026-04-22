@@ -396,6 +396,25 @@
   inset: auto auto 12% 50%;
 }
 
+.cover-kicker-back {
+  margin-top: 54px;
+}
+
+.back-cover-title {
+  position: relative;
+  z-index: 1;
+  width: min(380px, 100%);
+  margin-top: 132px;
+  text-align: center;
+  font-family: var(--display);
+  font-size: clamp(3rem, 6.6vw, 4.4rem);
+  line-height: 0.98;
+  color: #f7f1e3;
+  text-shadow:
+    0 0 18px rgba(82, 255, 233, 0.12),
+    0 0 30px rgba(255, 116, 235, 0.08);
+}
+
 .cover-title {
   position: relative;
   z-index: 1;
@@ -428,6 +447,9 @@
 
 .cover-copy-back {
   max-width: 360px;
+  margin-top: auto;
+  margin-bottom: 8px;
+  color: rgba(255, 229, 182, 0.9);
 }
 
 .storybook {
@@ -878,6 +900,11 @@
     margin-top: 110px;
     font-size: clamp(2.5rem, 5vw, 3.7rem);
   }
+
+  .back-cover-title {
+    margin-top: 112px;
+    font-size: clamp(2.5rem, 5.4vw, 3.8rem);
+  }
 }
 
 @media (max-width: 720px) {
@@ -941,6 +968,12 @@
     margin-top: 70px;
     font-size: clamp(2rem, 8.4vw, 2.8rem);
     line-height: 1;
+  }
+
+  .back-cover-title {
+    width: min(300px, 100%);
+    margin-top: 82px;
+    font-size: clamp(2rem, 8.6vw, 2.9rem);
   }
 
   .cover-name-back {

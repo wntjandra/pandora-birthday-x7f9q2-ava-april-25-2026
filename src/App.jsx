@@ -169,10 +169,10 @@ const FlipBookPage = forwardRef(function FlipBookPage({ page }, ref) {
       >
         <div className="cover-glow"></div>
         <div className="cover-rings"></div>
-        <p className="cover-kicker">For Ava</p>
-        <p className="cover-name cover-name-back">AVA</p>
+        <p className="cover-kicker cover-kicker-back">FOR AVA</p>
+        <h2 className="back-cover-title">Happy 20th Birthday.</h2>
         <p className="cover-copy cover-copy-back">
-          Happy Birthday. The whole glowing night was built for you.
+          The whole glowing night was built for you.
         </p>
       </article>
     )
@@ -207,8 +207,6 @@ function App() {
   const storybookShellRef = useRef(null)
   const flipBookRef = useRef(null)
   const audioRef = useRef(null)
-  const autoOpenedRef = useRef(false)
-  const suppressNextFlipSoundRef = useRef(false)
 
   useEffect(() => {
     const showBookTimer = window.setTimeout(() => setBookVisible(true), 1050)
@@ -230,28 +228,6 @@ function App() {
       audioRef.current = null
     }
   }, [])
-
-  useEffect(() => {
-    if (!bookVisible || !bookReady || autoOpenedRef.current) {
-      return undefined
-    }
-
-    const openBookTimer = window.setTimeout(() => {
-      const pageFlip = flipBookRef.current?.pageFlip?.()
-
-      if (!pageFlip) {
-        return
-      }
-
-      autoOpenedRef.current = true
-      suppressNextFlipSoundRef.current = true
-      pageFlip.flipNext('bottom')
-    }, 1100)
-
-    return () => {
-      window.clearTimeout(openBookTimer)
-    }
-  }, [bookVisible, bookReady])
 
   function setBookPose(normalizedX, normalizedY) {
     const shell = storybookShellRef.current
@@ -285,12 +261,6 @@ function App() {
 
   function handleBookFlip(event) {
     setCurrentPage(event.data)
-
-    if (suppressNextFlipSoundRef.current) {
-      suppressNextFlipSoundRef.current = false
-      return
-    }
-
     playFlipNoise()
   }
 
