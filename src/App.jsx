@@ -349,7 +349,7 @@ const FlipBookPage = forwardRef(function FlipBookPage({ page }, ref) {
           <span className="cover-title-subtitle">Into the Luminous World</span>
         </h1>
         <p className="cover-copy cover-copy-front">
-          A dream opened beneath a glowing canopy, and the world answered Ava by name.
+          Opened beneath a glowing canopy where the night never stops shimmering.
         </p>
       </article>
     )
