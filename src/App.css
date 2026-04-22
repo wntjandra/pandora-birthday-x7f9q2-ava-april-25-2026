@@ -79,6 +79,16 @@
   animation-delay: var(--star-delay);
 }
 
+.fluid-backdrop-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  opacity: 0.9;
+  touch-action: none;
+}
+
 .ripple-layer {
   z-index: 2;
 }
@@ -91,13 +101,15 @@
   height: 100%;
 }
 
-.ripple-canvas {
-  pointer-events: none;
-  opacity: 0.9;
+.ripple-canvas,
+.ripple-hit-surface {
+  display: none;
 }
 
-.ripple-hit-surface {
-  touch-action: none;
+.ripple-canvas,
+.ripple-hit-surface,
+.fluid-backdrop-canvas {
+  mix-blend-mode: screen;
 }
 
 .scene-vine {
@@ -133,7 +145,7 @@
   position: absolute;
   bottom: -2%;
   pointer-events: none;
-  z-index: 4;
+  z-index: 5;
   filter:
     drop-shadow(0 0 28px rgba(143, 86, 255, 0.24))
     drop-shadow(0 0 18px rgba(74, 210, 255, 0.18));
@@ -158,7 +170,7 @@
   width: 320px;
   height: 230px;
   pointer-events: none;
-  z-index: 5;
+  z-index: 6;
 }
 
 .bush-burst-one {
@@ -198,7 +210,7 @@
 }
 
 .mote-layer {
-  z-index: 6;
+  z-index: 7;
 }
 
 .scene-mote {
@@ -234,7 +246,7 @@
     radial-gradient(circle at 68% 50%, rgba(130, 166, 255, 0.16), transparent 34%),
     rgba(135, 243, 255, 0.08);
   animation: mistDrift 16s ease-in-out infinite;
-  z-index: 3;
+  z-index: 4;
 }
 
 .mist-front {
@@ -246,12 +258,12 @@
     radial-gradient(circle at 78% 55%, rgba(230, 255, 255, 0.09), transparent 26%);
   opacity: 0.94;
   animation: mistDrift 19s ease-in-out infinite reverse;
-  z-index: 7;
+  z-index: 8;
 }
 
 .book-zone {
   position: relative;
-  z-index: 20;
+  z-index: 24;
   width: min(1040px, 100%);
   display: flex;
   justify-content: center;
@@ -285,17 +297,19 @@
   z-index: -1;
 }
 
+.storybook-tilt {
+  position: relative;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
 .storybook-shell {
-  --book-tilt-x: 0deg;
-  --book-tilt-y: 0deg;
   --book-shift-x-sm: 0px;
   --book-shift-y-sm: 0px;
   --book-shift-x-md: 0px;
   --book-shift-y-md: 0px;
   position: relative;
   transform-style: preserve-3d;
-  transform: rotateX(var(--book-tilt-x)) rotateY(var(--book-tilt-y));
-  transition: transform 180ms ease;
 }
 
 .storybook {

@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import Tilt from 'react-parallax-tilt'
 import backgroundPandora from './assets/BackgroundPandora.png'
 import bushes1 from './assets/Bushes1.png'
 import bushes2 from './assets/Bushes2.png'
+import FluidBackdrop from './components/FluidBackdrop.jsx'
 import './App.css'
 
 const MotionMain = motion.main
@@ -138,166 +140,6 @@ function playTone(context, frequency, startAt, duration = 0.22) {
   oscillator.stop(startAt + duration)
 }
 
-function RippleSurface() {
-  const canvasRef = useRef(null)
-  const ripplesRef = useRef([])
-  const frameRef = useRef(0)
-  const draggingRef = useRef(false)
-  const lastSpawnRef = useRef(0)
-  const paletteIndexRef = useRef(0)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-
-    if (!canvas) {
-      return undefined
-    }
-
-    const context = canvas.getContext('2d')
-
-    if (!context) {
-      return undefined
-    }
-
-    function resizeCanvas() {
-      const dpr = window.devicePixelRatio || 1
-      const { clientWidth, clientHeight } = canvas
-
-      canvas.width = Math.max(1, Math.floor(clientWidth * dpr))
-      canvas.height = Math.max(1, Math.floor(clientHeight * dpr))
-      context.setTransform(dpr, 0, 0, dpr, 0, 0)
-    }
-
-    function drawFrame() {
-      const width = canvas.clientWidth
-      const height = canvas.clientHeight
-
-      context.clearRect(0, 0, width, height)
-      context.globalCompositeOperation = 'lighter'
-
-      ripplesRef.current = ripplesRef.current.filter((ripple) => ripple.alpha > 0.012)
-
-      ripplesRef.current.forEach((ripple) => {
-        ripple.radius += ripple.velocity
-        ripple.alpha *= 0.964
-        ripple.velocity *= 0.996
-
-        const glow = context.createRadialGradient(
-          ripple.x,
-          ripple.y,
-          ripple.radius * 0.08,
-          ripple.x,
-          ripple.y,
-          ripple.radius,
-        )
-
-        glow.addColorStop(0, `rgba(${ripple.core}, ${Math.min(ripple.alpha * 1.4, 0.28)})`)
-        glow.addColorStop(0.34, `rgba(${ripple.edge}, ${ripple.alpha * 0.5})`)
-        glow.addColorStop(0.82, `rgba(${ripple.edge}, 0)`)
-
-        context.fillStyle = glow
-        context.beginPath()
-        context.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2)
-        context.fill()
-
-        context.strokeStyle = `rgba(${ripple.core}, ${ripple.alpha * 0.28})`
-        context.lineWidth = Math.max(1, ripple.radius * 0.015)
-        context.beginPath()
-        context.arc(ripple.x, ripple.y, ripple.radius * 0.78, 0, Math.PI * 2)
-        context.stroke()
-      })
-
-      context.globalCompositeOperation = 'source-over'
-      frameRef.current = window.requestAnimationFrame(drawFrame)
-    }
-
-    resizeCanvas()
-    frameRef.current = window.requestAnimationFrame(drawFrame)
-    window.addEventListener('resize', resizeCanvas)
-
-    return () => {
-      window.cancelAnimationFrame(frameRef.current)
-      window.removeEventListener('resize', resizeCanvas)
-    }
-  }, [])
-
-  function spawnRipple(event, strength = 1) {
-    const canvas = canvasRef.current
-
-    if (!canvas) {
-      return
-    }
-
-    const rect = canvas.getBoundingClientRect()
-    const palette = [
-      { core: '176, 98, 255', edge: '88, 222, 255' },
-      { core: '255, 108, 235', edge: '92, 229, 255' },
-      { core: '138, 115, 255', edge: '74, 197, 255' },
-    ]
-    const selected = palette[paletteIndexRef.current % palette.length]
-
-    paletteIndexRef.current += 1
-
-    ripplesRef.current.push({
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-      radius: 22 + strength * 18,
-      alpha: 0.14 + strength * 0.08,
-      velocity: 2.4 + strength * 1.5,
-      core: selected.core,
-      edge: selected.edge,
-    })
-
-    if (ripplesRef.current.length > 24) {
-      ripplesRef.current.splice(0, ripplesRef.current.length - 24)
-    }
-  }
-
-  function handlePointerDown(event) {
-    draggingRef.current = true
-    lastSpawnRef.current = performance.now()
-    event.currentTarget.setPointerCapture?.(event.pointerId)
-    spawnRipple(event, 1.1)
-  }
-
-  function handlePointerMove(event) {
-    if (!draggingRef.current) {
-      return
-    }
-
-    const now = performance.now()
-
-    if (now - lastSpawnRef.current < 42) {
-      return
-    }
-
-    lastSpawnRef.current = now
-    spawnRipple(event, 0.8)
-  }
-
-  function stopDragging(event) {
-    draggingRef.current = false
-
-    if (event?.currentTarget?.hasPointerCapture?.(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId)
-    }
-  }
-
-  return (
-    <div className="ripple-layer" aria-hidden="true">
-      <canvas ref={canvasRef} className="ripple-canvas"></canvas>
-      <div
-        className="ripple-hit-surface"
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={stopDragging}
-        onPointerCancel={stopDragging}
-        onPointerLeave={stopDragging}
-      ></div>
-    </div>
-  )
-}
-
 function PaperSide({ page, side, countText }) {
   return (
     <section className={`paper-side paper-side-${side}`}>
@@ -358,14 +200,6 @@ function App() {
 
   function resetBookPose() {
     setBookPose(0, 0)
-  }
-
-  function handleBookPointerMove(event) {
-    const rect = event.currentTarget.getBoundingClientRect()
-    const normalizedX = ((event.clientX - rect.left) / rect.width) * 2 - 1
-    const normalizedY = ((event.clientY - rect.top) / rect.height) * 2 - 1
-
-    setBookPose(normalizedX, normalizedY)
   }
 
   async function ensureAudioContext() {
@@ -468,7 +302,7 @@ function App() {
           ))}
         </div>
 
-        <RippleSurface />
+        <FluidBackdrop />
 
         <div className="vine-layer">
           {vines.map((vine) => (
@@ -570,89 +404,101 @@ function App() {
             <div className="book-aura" aria-hidden="true"></div>
             <div className="book-stack-shadow" aria-hidden="true"></div>
 
-            <div
-              ref={storybookShellRef}
-              className="storybook-shell"
-              onPointerMove={handleBookPointerMove}
-              onPointerLeave={resetBookPose}
+            <Tilt
+              className="storybook-tilt"
+              perspective={1800}
+              tiltMaxAngleX={10}
+              tiltMaxAngleY={14}
+              scale={1.01}
+              transitionSpeed={220}
+              glareEnable={true}
+              glareMaxOpacity={0.08}
+              glareColor="#b8f7ff"
+              glareBorderRadius="26px"
+              onMove={({ tiltAngleXPercentage = 0, tiltAngleYPercentage = 0 }) => {
+                setBookPose(tiltAngleYPercentage / 100, tiltAngleXPercentage / 100)
+              }}
+              onLeave={resetBookPose}
             >
-              <div className="storybook">
-                <div className="storybook-back" aria-hidden="true"></div>
+              <div ref={storybookShellRef} className="storybook-shell">
+                <div className="storybook">
+                  <div className="storybook-back" aria-hidden="true"></div>
 
-                <div className="storybook-pages">
-                  <div className="paper-spread">
-                    <PaperSide page={currentSpread.left} side="left" />
-                    <div className="paper-spine" aria-hidden="true"></div>
-                    <PaperSide
-                      page={currentSpread.right}
-                      side="right"
-                      countText={pageCountLabel}
-                    />
+                  <div className="storybook-pages">
+                    <div className="paper-spread">
+                      <PaperSide page={currentSpread.left} side="left" />
+                      <div className="paper-spine" aria-hidden="true"></div>
+                      <PaperSide
+                        page={currentSpread.right}
+                        side="right"
+                        countText={pageCountLabel}
+                      />
+                    </div>
+
+                    <AnimatePresence initial={false}>
+                      {turningPage ? (
+                        <motion.div
+                          key={turnToken}
+                          className={`page-turn-sheet page-turn-sheet-${turnDirection}`}
+                          initial={{ rotateY: 0 }}
+                          animate={{ rotateY: turnDirection === 'forward' ? -178 : 178 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.92, ease: [0.35, 0.02, 0.2, 1] }}
+                        >
+                          <div className="page-turn-face page-turn-front">
+                            <p className="page-turn-label">{turningFrontPage.eyebrow}</p>
+                            <p className="page-turn-title">{turningFrontPage.title}</p>
+                            <div className="page-turn-glow"></div>
+                          </div>
+                          <div className="page-turn-face page-turn-back">
+                            <p className="page-turn-label">{turningBackPage.eyebrow}</p>
+                            <p className="page-turn-title">{turningBackPage.title}</p>
+                            <div className="page-turn-glow"></div>
+                          </div>
+                        </motion.div>
+                      ) : null}
+                    </AnimatePresence>
+
+                    <button
+                      type="button"
+                      className="book-hitarea book-hitarea-left"
+                      onClick={() => handleTurnPage('backward')}
+                      disabled={!bookOpen || turningPage}
+                      aria-label="Turn the book backward"
+                    >
+                      <span className="sr-only">Turn the book backward</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="book-hitarea book-hitarea-right"
+                      onClick={() => handleTurnPage('forward')}
+                      disabled={!bookOpen || turningPage}
+                      aria-label="Turn the book forward"
+                    >
+                      <span className="sr-only">Turn the book forward</span>
+                    </button>
                   </div>
 
-                  <AnimatePresence initial={false}>
-                    {turningPage ? (
-                      <motion.div
-                        key={turnToken}
-                        className={`page-turn-sheet page-turn-sheet-${turnDirection}`}
-                        initial={{ rotateY: 0 }}
-                        animate={{ rotateY: turnDirection === 'forward' ? -178 : 178 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.92, ease: [0.35, 0.02, 0.2, 1] }}
-                      >
-                        <div className="page-turn-face page-turn-front">
-                          <p className="page-turn-label">{turningFrontPage.eyebrow}</p>
-                          <p className="page-turn-title">{turningFrontPage.title}</p>
-                          <div className="page-turn-glow"></div>
-                        </div>
-                        <div className="page-turn-face page-turn-back">
-                          <p className="page-turn-label">{turningBackPage.eyebrow}</p>
-                          <p className="page-turn-title">{turningBackPage.title}</p>
-                          <div className="page-turn-glow"></div>
-                        </div>
-                      </motion.div>
-                    ) : null}
-                  </AnimatePresence>
-
-                  <button
-                    type="button"
-                    className="book-hitarea book-hitarea-left"
-                    onClick={() => handleTurnPage('backward')}
-                    disabled={!bookOpen || turningPage}
-                    aria-label="Turn the book backward"
+                  <motion.div
+                    className={`storybook-cover ${bookOpen ? 'is-open' : ''}`}
+                    initial={false}
+                    animate={{ rotateY: bookOpen ? -166 : 0 }}
+                    transition={{ duration: 1.35, ease: [0.2, 0.9, 0.2, 1] }}
                   >
-                    <span className="sr-only">Turn the book backward</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    className="book-hitarea book-hitarea-right"
-                    onClick={() => handleTurnPage('forward')}
-                    disabled={!bookOpen || turningPage}
-                    aria-label="Turn the book forward"
-                  >
-                    <span className="sr-only">Turn the book forward</span>
-                  </button>
+                    <div className="cover-glow"></div>
+                    <div className="cover-rings"></div>
+                    <p className="cover-kicker">Ava&apos;s Birthday Journal</p>
+                    <p className="cover-name">AVA</p>
+                    <p className="cover-date">April 25, 2026</p>
+                    <p className="cover-copy">
+                      Opened beneath a glowing canopy where the night never stops
+                      shimmering.
+                    </p>
+                  </motion.div>
                 </div>
-
-                <motion.div
-                  className={`storybook-cover ${bookOpen ? 'is-open' : ''}`}
-                  initial={false}
-                  animate={{ rotateY: bookOpen ? -166 : 0 }}
-                  transition={{ duration: 1.35, ease: [0.2, 0.9, 0.2, 1] }}
-                >
-                  <div className="cover-glow"></div>
-                  <div className="cover-rings"></div>
-                  <p className="cover-kicker">Ava&apos;s Birthday Journal</p>
-                  <p className="cover-name">AVA</p>
-                  <p className="cover-date">April 25, 2026</p>
-                  <p className="cover-copy">
-                    Opened beneath a glowing canopy where the night never stops
-                    shimmering.
-                  </p>
-                </motion.div>
               </div>
-            </div>
+            </Tilt>
           </motion.section>
         ) : null}
       </AnimatePresence>
