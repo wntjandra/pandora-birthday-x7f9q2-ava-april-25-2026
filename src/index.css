@@ -1,0 +1,104 @@
+:root {
+  --ink: #f8efe2;
+  --muted: #d6c7b6;
+  --line: rgba(255, 255, 255, 0.09);
+  --gold: #f2ba66;
+  --teal: #77e6d5;
+  --rose: #ff8f9b;
+  --shadow: 0 28px 90px rgba(4, 9, 20, 0.48);
+  --display: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+  --body: 'Avenir Next', 'Segoe UI Variable Text', 'Trebuchet MS', sans-serif;
+
+  font-family: var(--body);
+  line-height: 1.55;
+  font-weight: 400;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 15% 15%, rgba(119, 230, 213, 0.18), transparent 28%),
+    radial-gradient(circle at 85% 5%, rgba(255, 143, 155, 0.14), transparent 24%),
+    linear-gradient(140deg, #07111b 0%, #102236 42%, #32192f 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-position: 0 0, 24px 24px;
+  background-size: 48px 48px;
+  opacity: 0.22;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+h1 {
+  font-size: clamp(3rem, 6vw, 4.85rem);
+  line-height: 0.95;
+}
+
+p {
+  color: var(--muted);
+}
+
+strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+code {
+  font-family: 'Cascadia Code', Consolas, monospace;
+}
+
+#root {
+  min-height: 100vh;
+}
