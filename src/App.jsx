@@ -444,7 +444,7 @@ function App() {
     const music = new Audio(soundtrack[0])
 
     music.preload = 'auto'
-    music.volume = 0.3
+    music.volume = 0.4
     musicAudioRef.current = music
     soundtrackIndexRef.current = 0
 
@@ -461,7 +461,7 @@ function App() {
         return
       }
 
-      currentMusic.volume = 0.5
+      currentMusic.volume = 0.4
 
       const playPromise = currentMusic.play()
 
