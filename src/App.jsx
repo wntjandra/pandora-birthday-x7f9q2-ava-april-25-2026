@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Sparkles, Volume2, VolumeX } from 'lucide-react'
 import './App.css'
 
 const MotionMain = motion.main
@@ -24,7 +23,7 @@ const pageSpreads = [
     left: {
       eyebrow: 'Bioluminescent Grove',
       title: 'Everything is glowing on purpose.',
-      body: 'The floating spores, the rivers of blue light, the towering silhouettes, the warm gold drifting through the leaves. It all feels like the kind of magic that only shows up when someone special walks in.',
+      body: 'The floating spores, the rivers of blue light, the towering silhouettes, and the warm bloom drifting through the leaves. It all feels like the kind of magic that only shows up when someone special walks in.',
       footer: 'Some nights feel larger than themselves',
     },
     right: {
@@ -58,57 +57,76 @@ const pageSpreads = [
     right: {
       eyebrow: 'Encore',
       title: 'And if you want, the whole night can begin again.',
-      body: 'One more click restarts the pages, like opening the book beneath the stars all over again.',
+      body: 'One more click restarts the pages, like opening the book beneath the glowing canopy all over again.',
       footer: 'Click to loop back to the beginning',
     },
   },
 ]
 
 const stars = [
-  { left: '8%', top: '10%', size: '6px', delay: '0s', duration: '4.8s' },
-  { left: '14%', top: '18%', size: '4px', delay: '1.2s', duration: '5.4s' },
-  { left: '22%', top: '12%', size: '7px', delay: '0.6s', duration: '6.1s' },
-  { left: '31%', top: '7%', size: '5px', delay: '1.9s', duration: '5.2s' },
-  { left: '42%', top: '16%', size: '4px', delay: '2.6s', duration: '4.4s' },
-  { left: '53%', top: '8%', size: '7px', delay: '1.1s', duration: '5.8s' },
-  { left: '63%', top: '13%', size: '5px', delay: '0.4s', duration: '5s' },
-  { left: '74%', top: '6%', size: '6px', delay: '2.8s', duration: '6.3s' },
-  { left: '86%', top: '14%', size: '4px', delay: '1.5s', duration: '4.9s' },
-  { left: '93%', top: '9%', size: '8px', delay: '0.7s', duration: '5.6s' },
-  { left: '11%', top: '28%', size: '4px', delay: '2.1s', duration: '4.7s' },
-  { left: '27%', top: '24%', size: '5px', delay: '1.4s', duration: '5.3s' },
-  { left: '58%', top: '27%', size: '4px', delay: '2.4s', duration: '4.5s' },
-  { left: '79%', top: '23%', size: '6px', delay: '0.9s', duration: '5.9s' },
+  { left: '8%', top: '8%', size: '5px', delay: '0s', duration: '4.8s' },
+  { left: '15%', top: '15%', size: '4px', delay: '1.2s', duration: '5.4s' },
+  { left: '24%', top: '12%', size: '6px', delay: '0.6s', duration: '6.1s' },
+  { left: '33%', top: '7%', size: '5px', delay: '1.9s', duration: '5.2s' },
+  { left: '44%', top: '14%', size: '4px', delay: '2.6s', duration: '4.4s' },
+  { left: '55%', top: '6%', size: '6px', delay: '1.1s', duration: '5.8s' },
+  { left: '67%', top: '12%', size: '5px', delay: '0.4s', duration: '5s' },
+  { left: '77%', top: '5%', size: '6px', delay: '2.8s', duration: '6.3s' },
+  { left: '88%', top: '11%', size: '4px', delay: '1.5s', duration: '4.9s' },
+  { left: '94%', top: '8%', size: '7px', delay: '0.7s', duration: '5.6s' },
+  { left: '11%', top: '24%', size: '4px', delay: '2.1s', duration: '4.7s' },
+  { left: '29%', top: '20%', size: '5px', delay: '1.4s', duration: '5.3s' },
+  { left: '58%', top: '23%', size: '4px', delay: '2.4s', duration: '4.5s' },
+  { left: '82%', top: '19%', size: '6px', delay: '0.9s', duration: '5.9s' },
 ]
 
 const motes = [
-  { left: '10%', bottom: '16%', size: '16px', delay: '0s', duration: '10s' },
-  { left: '18%', bottom: '22%', size: '12px', delay: '2.2s', duration: '8.8s' },
-  { left: '30%', bottom: '14%', size: '18px', delay: '1.2s', duration: '10.6s' },
-  { left: '44%', bottom: '20%', size: '14px', delay: '3.1s', duration: '9.4s' },
-  { left: '57%', bottom: '12%', size: '20px', delay: '2.7s', duration: '11.2s' },
-  { left: '68%', bottom: '18%', size: '12px', delay: '1.7s', duration: '8.4s' },
-  { left: '81%', bottom: '15%', size: '17px', delay: '0.8s', duration: '9.8s' },
-  { left: '90%', bottom: '24%', size: '13px', delay: '2.9s', duration: '8.9s' },
+  { left: '9%', bottom: '18%', size: '16px', delay: '0s', duration: '10s' },
+  { left: '17%', bottom: '24%', size: '12px', delay: '2.2s', duration: '8.8s' },
+  { left: '29%', bottom: '16%', size: '18px', delay: '1.2s', duration: '10.6s' },
+  { left: '42%', bottom: '22%', size: '14px', delay: '3.1s', duration: '9.4s' },
+  { left: '56%', bottom: '13%', size: '20px', delay: '2.7s', duration: '11.2s' },
+  { left: '68%', bottom: '19%', size: '12px', delay: '1.7s', duration: '8.4s' },
+  { left: '80%', bottom: '16%', size: '17px', delay: '0.8s', duration: '9.8s' },
+  { left: '91%', bottom: '26%', size: '13px', delay: '2.9s', duration: '8.9s' },
 ]
 
 const trunks = [
-  { left: '5%', width: '14%', height: '62%', rotate: '-8deg', delay: '0.1s' },
-  { left: '18%', width: '10%', height: '54%', rotate: '6deg', delay: '0.4s' },
-  { left: '72%', width: '12%', height: '57%', rotate: '-5deg', delay: '0.2s' },
-  { left: '84%', width: '15%', height: '64%', rotate: '7deg', delay: '0.5s' },
+  { left: '0%', width: '16%', height: '72%', rotate: '-4deg', delay: '0.1s' },
+  { left: '14%', width: '11%', height: '56%', rotate: '5deg', delay: '0.35s' },
+  { left: '73%', width: '13%', height: '60%', rotate: '-4deg', delay: '0.2s' },
+  { left: '86%', width: '16%', height: '78%', rotate: '5deg', delay: '0.45s' },
 ]
 
 const fronds = [
-  { left: '1%', width: '18%', height: '38%', rotate: '-14deg', delay: '0s', duration: '9s' },
-  { left: '10%', width: '15%', height: '30%', rotate: '9deg', delay: '1.2s', duration: '8.4s' },
-  { left: '18%', width: '18%', height: '34%', rotate: '-8deg', delay: '0.8s', duration: '8.8s' },
-  { left: '69%', width: '16%', height: '28%', rotate: '12deg', delay: '0.5s', duration: '7.8s' },
-  { left: '77%', width: '19%', height: '36%', rotate: '-10deg', delay: '1.8s', duration: '8.6s' },
-  { left: '88%', width: '15%', height: '31%', rotate: '14deg', delay: '0.9s', duration: '8.1s' },
+  { left: '0%', width: '18%', height: '40%', rotate: '-14deg', delay: '0s', duration: '9s' },
+  { left: '9%', width: '15%', height: '31%', rotate: '9deg', delay: '1.2s', duration: '8.4s' },
+  { left: '18%', width: '20%', height: '35%', rotate: '-8deg', delay: '0.8s', duration: '8.8s' },
+  { left: '68%', width: '17%', height: '30%', rotate: '12deg', delay: '0.5s', duration: '7.8s' },
+  { left: '78%', width: '19%', height: '38%', rotate: '-10deg', delay: '1.8s', duration: '8.6s' },
+  { left: '89%', width: '15%', height: '33%', rotate: '14deg', delay: '0.9s', duration: '8.1s' },
 ]
 
-const openNotes = [392, 523.25, 659.25, 783.99]
+const canopyBlooms = [
+  { left: '62%', top: '11%', width: '224px', height: '90px', delay: '0s', duration: '9.8s' },
+  { left: '76%', top: '3%', width: '254px', height: '102px', delay: '1.5s', duration: '10.6s' },
+  { left: '54%', top: '20%', width: '140px', height: '58px', delay: '0.8s', duration: '8.7s' },
+  { left: '25%', top: '22%', width: '128px', height: '54px', delay: '2s', duration: '8.9s' },
+  { left: '84%', top: '36%', width: '116px', height: '48px', delay: '1.1s', duration: '9.1s' },
+  { left: '46%', top: '58%', width: '92px', height: '40px', delay: '0.4s', duration: '7.9s' },
+]
+
+const hangingVines = [
+  { left: '8%', top: '-5%', height: '56%', rotate: '-3deg', delay: '0s', duration: '11s' },
+  { left: '15%', top: '-8%', height: '65%', rotate: '4deg', delay: '1.4s', duration: '12.6s' },
+  { left: '24%', top: '-6%', height: '60%', rotate: '-5deg', delay: '0.8s', duration: '10.8s' },
+  { left: '33%', top: '-3%', height: '48%', rotate: '2deg', delay: '1.8s', duration: '9.8s' },
+  { left: '60%', top: '-9%', height: '50%', rotate: '5deg', delay: '0.6s', duration: '11.4s' },
+  { left: '71%', top: '-5%', height: '58%', rotate: '-4deg', delay: '1.1s', duration: '10.4s' },
+  { left: '81%', top: '-8%', height: '67%', rotate: '6deg', delay: '2.2s', duration: '12.8s' },
+  { left: '90%', top: '-4%', height: '54%', rotate: '-3deg', delay: '1.6s', duration: '10.2s' },
+]
+
 const turnNotes = [523.25, 659.25, 783.99]
 
 function playTone(context, frequency, startAt, duration = 0.22) {
@@ -148,7 +166,6 @@ function App() {
   const [pageIndex, setPageIndex] = useState(0)
   const [turningPage, setTurningPage] = useState(false)
   const [turnToken, setTurnToken] = useState(0)
-  const [audioEnabled, setAudioEnabled] = useState(false)
   const audioContextRef = useRef(null)
 
   const currentSpread = pageSpreads[pageIndex]
@@ -159,8 +176,8 @@ function App() {
   ).padStart(2, '0')}`
 
   useEffect(() => {
-    const showBookTimer = window.setTimeout(() => setBookVisible(true), 1300)
-    const openBookTimer = window.setTimeout(() => setBookOpen(true), 2450)
+    const showBookTimer = window.setTimeout(() => setBookVisible(true), 1150)
+    const openBookTimer = window.setTimeout(() => setBookOpen(true), 2200)
 
     return () => {
       window.clearTimeout(showBookTimer)
@@ -200,32 +217,12 @@ function App() {
     })
   }
 
-  async function handleAudioToggle() {
-    if (!audioEnabled) {
-      const isReady = await ensureAudioContext()
-
-      if (!isReady) {
-        return
-      }
-
-      setAudioEnabled(true)
-      playSequence(openNotes)
-      return
-    }
-
-    if (audioContextRef.current) {
-      await audioContextRef.current.suspend()
-    }
-
-    setAudioEnabled(false)
-  }
-
   async function handleTurnPage() {
     if (!bookOpen || turningPage) {
       return
     }
 
-    const isReady = audioEnabled ? await ensureAudioContext() : false
+    const isReady = await ensureAudioContext()
 
     setTurningPage(true)
     setTurnToken((token) => token + 1)
@@ -271,6 +268,43 @@ function App() {
           ))}
         </div>
 
+        <div className="canopy-bloom-layer">
+          {canopyBlooms.map((bloom) => (
+            <span
+              key={`${bloom.left}-${bloom.top}`}
+              className="scene-bloom"
+              style={{
+                '--bloom-left': bloom.left,
+                '--bloom-top': bloom.top,
+                '--bloom-width': bloom.width,
+                '--bloom-height': bloom.height,
+                '--bloom-delay': bloom.delay,
+                '--bloom-duration': bloom.duration,
+              }}
+            >
+              <span className="scene-bloom-core"></span>
+              <span className="scene-bloom-tassels"></span>
+            </span>
+          ))}
+        </div>
+
+        <div className="vine-curtain">
+          {hangingVines.map((vine) => (
+            <span
+              key={`${vine.left}-${vine.height}`}
+              className="scene-vine"
+              style={{
+                '--vine-left': vine.left,
+                '--vine-top': vine.top,
+                '--vine-height': vine.height,
+                '--vine-rotate': vine.rotate,
+                '--vine-delay': vine.delay,
+                '--vine-duration': vine.duration,
+              }}
+            ></span>
+          ))}
+        </div>
+
         <div className="light-columns">
           <span className="light-column light-column-one"></span>
           <span className="light-column light-column-two"></span>
@@ -278,6 +312,16 @@ function App() {
         </div>
 
         <div className="mist mist-back"></div>
+
+        <div className="bridge-layer">
+          <span className="bridge-ridge"></span>
+          <span className="bridge-root bridge-root-one"></span>
+          <span className="bridge-root bridge-root-two"></span>
+          <span className="bridge-root bridge-root-three"></span>
+          <span className="bridge-hanging bridge-hanging-one"></span>
+          <span className="bridge-hanging bridge-hanging-two"></span>
+          <span className="bridge-hanging bridge-hanging-three"></span>
+        </div>
 
         <div className="trunk-layer">
           {trunks.map((trunk) => (
@@ -333,20 +377,6 @@ function App() {
         <div className="forest-floor"></div>
       </section>
 
-      <motion.header
-        className="scene-intro"
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, delay: 0.25, ease: 'easeOut' }}
-      >
-        <p className="scene-kicker">Pandora-inspired birthday night</p>
-        <h1>A glowing jungle appears, then a storybook opens for Ava.</h1>
-        <p className="scene-copy">
-          The scene starts on its own. Once the cover swings open, click the book
-          to flip through the pages.
-        </p>
-      </motion.header>
-
       <AnimatePresence>
         {bookVisible ? (
           <motion.section
@@ -355,6 +385,7 @@ function App() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 1.1, ease: [0.2, 0.9, 0.2, 1] }}
           >
+            <div className="book-aura" aria-hidden="true"></div>
             <div className="book-stack-shadow" aria-hidden="true"></div>
 
             <div className="storybook">
@@ -416,30 +447,11 @@ function App() {
                 <p className="cover-name">AVA</p>
                 <p className="cover-date">April 25, 2026</p>
                 <p className="cover-copy">
-                  Opened beneath a night sky full of glowing leaves and drifting
-                  stars.
+                  Opened beneath a glowing canopy where the night never stops
+                  shimmering.
                 </p>
               </motion.div>
             </div>
-
-            <motion.div
-              className="control-rail"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 2.65, ease: 'easeOut' }}
-            >
-              <button type="button" className="sound-pill" onClick={handleAudioToggle}>
-                {audioEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-                {audioEnabled ? 'Forest chime on' : 'Enable forest chime'}
-              </button>
-
-              <p className="turn-hint">
-                <Sparkles size={14} />
-                {bookOpen
-                  ? 'Click the open book to turn the page.'
-                  : 'The cover is opening on its own.'}
-              </p>
-            </motion.div>
           </motion.section>
         ) : null}
       </AnimatePresence>
