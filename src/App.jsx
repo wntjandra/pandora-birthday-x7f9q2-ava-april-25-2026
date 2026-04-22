@@ -27,7 +27,7 @@ const pageSpreads = [
   {
     left: {
       eyebrow: 'Prologue',
-      title: 'She remembered the light.',
+      title: 'The Light',
       blocks: [
         "Ava didn't remember falling asleep.",
         "But she remembered the light. It wasn't bright or blinding. It was soft, alive, like the world itself was glowing from within.",
@@ -37,7 +37,7 @@ const pageSpreads = [
     },
     right: {
       eyebrow: 'The Awakening',
-      title: 'The forest answered her first step.',
+      title: 'First Steps',
       className: 'compact',
       blocks: [
         'She lay on a forest floor that shimmered beneath her, each breath sending blue and violet ripples through the moss.',
@@ -60,7 +60,7 @@ const pageSpreads = [
     },
     right: {
       eyebrow: 'Living World',
-      title: 'The world unfolded around her.',
+      title: 'Luminous World',
       blocks: [
         'Massive mushroom forms rose in the distance, their glowing caps casting halos through the mist in pinks, purples, and blues.',
         'A nearby stream carried light inside it. When Ava dipped her hand into the water, the glow gathered around her fingers as if it recognized her.',
@@ -72,7 +72,7 @@ const pageSpreads = [
   {
     left: {
       eyebrow: 'The Others',
-      title: '"You are new."',
+      title: 'Familiar Faces',
       className: 'compact',
       blocks: [
         'Two girls stood nearby, both carrying the same faint radiance as the trees around them.',
@@ -83,7 +83,7 @@ const pageSpreads = [
     },
     right: {
       eyebrow: 'A World of Wonder',
-      title: 'They followed the glow together.',
+      title: 'Following the Light',
       blocks: [
         'They walked beneath enormous canopies where strands of light brushed their shoulders like silk.',
         'They climbed roots that pulsed under their touch and crossed wide clearings where the sky shimmered with drifting color instead of stars.',
@@ -95,7 +95,7 @@ const pageSpreads = [
   {
     left: {
       eyebrow: 'The Ridge',
-      title: '"It is always changing."',
+      title: 'Sky Creatures',
       blocks: [
         '"It\'s always changing," one of the girls said.',
         'Ava watched the colors shift slowly, as if the whole world was dreaming.',
@@ -105,8 +105,8 @@ const pageSpreads = [
     },
     right: {
       eyebrow: 'The Bond',
-      title: 'Something in the sky called to her.',
-      className: 'compact',
+      title: null,
+      className: 'compact continuation',
       blocks: [
         'A distant cry echoed overhead. A creature soared above them, its wings long and elegant, trailing strokes of light through the air.',
         'It circled once, then descended.',
@@ -127,7 +127,7 @@ const pageSpreads = [
     },
     right: {
       eyebrow: 'Tsaheylu',
-      title: 'It chose her, and she chose it.',
+      title: 'Chosen',
       className: 'compact',
       blocks: [
         'The creature lowered itself and watched her. Ava touched the long strand of hair that felt different, and she understood.',
@@ -140,7 +140,7 @@ const pageSpreads = [
   {
     left: {
       eyebrow: 'Tree of Connection',
-      title: 'A deeper light was waiting.',
+      title: 'World Tree',
       blocks: [
         'As twilight deepened, Ava felt another pull, gentle and certain.',
         'She followed glowing roots and drifting lights until she stood before a tree brighter than anything she had seen.',
@@ -150,7 +150,7 @@ const pageSpreads = [
     },
     right: {
       eyebrow: 'The Tree',
-      title: 'She walked to it alone.',
+      title: 'Connection',
       className: 'compact',
       blocks: [
         'Her friends stayed behind while Ava stepped closer, breathing more slowly until her rhythm matched the tree.',
@@ -163,7 +163,8 @@ const pageSpreads = [
   {
     left: {
       eyebrow: 'Eywa',
-      title: 'The world became everything at once.',
+      title: 'World and Everything',
+      className: 'compact',
       blocks: [
         'She felt the roots beneath the ground, the trees stretching upward, the movement of creatures, the flow of water, and the quiet rhythm of life.',
         'She was no longer only in the world. She was part of it.',
@@ -173,7 +174,7 @@ const pageSpreads = [
     },
     right: {
       eyebrow: "Eywa's Gift",
-      title: 'The light had always been hers.',
+      title: null,
       className: 'verse',
       blocks: [
         {
@@ -188,7 +189,7 @@ const pageSpreads = [
   {
     left: {
       eyebrow: 'The Return',
-      title: 'The perfect day began to dim.',
+      title: 'The Perfect Day Began to Dim',
       blocks: [
         'The forest softened into twilight. Ava turned to her friends. "Will I see you again?"',
         'One smiled. "Maybe."',
@@ -198,7 +199,7 @@ const pageSpreads = [
     },
     right: {
       eyebrow: 'Awakening',
-      title: 'She opened her eyes at home.',
+      title: 'She Opened Her Eyes at Home',
       blocks: [
         'Her room was still and quiet, but something had changed.',
         'Ava sat up slowly and looked at her hands.',
@@ -210,7 +211,7 @@ const pageSpreads = [
   {
     left: {
       eyebrow: 'Afterglow',
-      title: 'The light stayed.',
+      title: 'The Light Stayed',
       blocks: [
         'Back in her room, the calm of that glowing forest remained.',
         'What Eywa gave her was not something new. It was the certainty that her light had been there all along.',
@@ -220,7 +221,7 @@ const pageSpreads = [
     },
     right: {
       eyebrow: 'Final Line',
-      title: 'Because somewhere deep within her...',
+      title: 'Because Somewhere Deep Within Her',
       className: 'closing',
       blocks: [{ type: 'quote', text: 'the luminous world was still alive.' }],
       footer: 'Turn once more and the dream begins again',
@@ -374,7 +375,12 @@ const FlipBookPage = forwardRef(function FlipBookPage({ page }, ref) {
     'flip-book-page',
     'flip-book-page-story',
     `flip-book-page-story-${page.side}`,
-    page.className ? `flip-book-page-story-${page.className}` : '',
+    ...(page.className
+      ? page.className
+          .split(' ')
+          .filter(Boolean)
+          .map((className) => `flip-book-page-story-${className}`)
+      : []),
   ]
     .filter(Boolean)
     .join(' ')

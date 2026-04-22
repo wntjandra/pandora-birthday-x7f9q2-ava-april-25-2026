@@ -372,8 +372,8 @@
 
 .flip-book-page-story h2 {
   color: #2a2016;
-  font-size: clamp(1.8rem, 3vw, 2.7rem);
-  line-height: 0.98;
+  font-size: clamp(1.66rem, 2.78vw, 2.42rem);
+  line-height: 0.96;
 }
 
 .flip-book-page-cover {
@@ -593,8 +593,8 @@
 
 .paper-body {
   color: rgba(50, 38, 26, 0.84);
-  font-size: clamp(0.98rem, 1.7vw, 1.08rem);
-  line-height: 1.7;
+  font-size: clamp(0.95rem, 1.62vw, 1.04rem);
+  line-height: 1.64;
 }
 
 .paper-verse,
@@ -603,10 +603,12 @@
 }
 
 .paper-verse {
-  color: rgba(47, 35, 24, 0.9);
+  color: rgba(42, 31, 22, 0.96);
   font-family: var(--display);
-  font-size: clamp(0.92rem, 1.6vw, 1.03rem);
-  line-height: 1.62;
+  font-size: clamp(0.88rem, 1.5vw, 0.98rem);
+  font-weight: 700;
+  line-height: 1.54;
+  letter-spacing: 0.01em;
   text-align: center;
   white-space: pre-line;
 }
@@ -646,7 +648,7 @@
 }
 
 .flip-book-page-story-compact h2 {
-  font-size: clamp(1.66rem, 2.7vw, 2.28rem);
+  font-size: clamp(1.52rem, 2.45vw, 2.06rem);
 }
 
 .flip-book-page-story-compact .paper-content {
@@ -654,8 +656,8 @@
 }
 
 .flip-book-page-story-compact .paper-body {
-  font-size: clamp(0.92rem, 1.56vw, 1rem);
-  line-height: 1.62;
+  font-size: clamp(0.89rem, 1.48vw, 0.97rem);
+  line-height: 1.56;
 }
 
 .flip-book-page-story-continuation .flip-book-page-inner {
@@ -665,6 +667,10 @@
 .flip-book-page-story-continuation .paper-content {
   gap: 16px;
   padding-top: 4px;
+}
+
+.flip-book-page-story-continuation h2 + .paper-content {
+  padding-top: 0;
 }
 
 .flip-book-page-story-verse h2,
@@ -677,8 +683,20 @@
   justify-content: center;
 }
 
-.flip-book-page-story-closing .paper-body {
+.flip-book-page-story-closing .paper-body,
+.flip-book-page-story-closing .paper-quote {
   text-align: center;
+}
+
+.flip-book-page-story-closing .paper-quote {
+  color: #8a5cff;
+  font-weight: 700;
+  background:
+    linear-gradient(135deg, #7af7ff 0%, #a86dff 46%, #ff8eb8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
 }
 
 .book-hint {
