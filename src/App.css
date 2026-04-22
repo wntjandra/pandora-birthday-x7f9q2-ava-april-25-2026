@@ -1,4 +1,5 @@
 .page-shell {
+  --book-width: min(780px, calc(100vw - 48px));
   position: relative;
   min-height: 100vh;
   overflow: hidden;
@@ -27,16 +28,16 @@
     radial-gradient(circle at 50% 74%, rgba(39, 215, 255, 0.18), transparent 24%),
     radial-gradient(circle at 70% 12%, rgba(255, 104, 232, 0.12), transparent 22%),
     linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(3, 6, 16, 0.38) 56%, rgba(2, 4, 10, 0.72) 100%);
-  z-index: -5;
+  z-index: 0;
 }
 
 .scene-backdrop {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  z-index: -4;
-  --bush-one-width: min(42vw, 640px);
-  --bush-two-width: min(45vw, 680px);
+  z-index: 1;
+  --bush-left-width: min(46vw, 700px);
+  --bush-right-width: min(42vw, 620px);
 }
 
 .pandora-backdrop {
@@ -64,6 +65,7 @@
 .ripple-layer {
   position: absolute;
   inset: 0;
+  pointer-events: none;
 }
 
 .scene-star {
@@ -87,30 +89,8 @@
   width: 100%;
   height: 100%;
   z-index: 2;
-  opacity: 0.9;
-  touch-action: none;
-}
-
-.ripple-layer {
-  z-index: 2;
-}
-
-.ripple-canvas,
-.ripple-hit-surface {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.ripple-canvas,
-.ripple-hit-surface {
-  display: none;
-}
-
-.ripple-canvas,
-.ripple-hit-surface,
-.fluid-backdrop-canvas {
+  opacity: 0.92;
+  pointer-events: none;
   mix-blend-mode: screen;
 }
 
@@ -143,44 +123,44 @@
   opacity: 0.42;
 }
 
-.bush-layer {
+.bush-cluster {
   position: absolute;
   bottom: -8%;
-  pointer-events: none;
   z-index: 5;
+  width: var(--cluster-width);
+  pointer-events: none;
   filter:
     drop-shadow(0 0 28px rgba(143, 86, 255, 0.24))
     drop-shadow(0 0 18px rgba(74, 210, 255, 0.18));
-  animation: bushFloat 12s ease-in-out infinite;
+  animation: bushFloat 14s ease-in-out infinite;
 }
 
-.bush-layer-one {
+.bush-cluster-left {
   left: -2%;
-  width: var(--bush-one-width);
+  --cluster-width: var(--bush-left-width);
   animation-delay: 0.3s;
 }
 
-.bush-layer-two {
+.bush-cluster-right {
   right: -2%;
-  width: var(--bush-two-width);
+  --cluster-width: var(--bush-right-width);
   animation-delay: 1.6s;
+}
+
+.bush-layer {
+  width: 100%;
+  height: auto;
 }
 
 .bush-burst {
   position: absolute;
-  bottom: 1%;
-  width: 320px;
-  height: 230px;
+  left: 50%;
+  bottom: 14%;
+  width: min(68%, 320px);
+  height: min(44vw, 230px);
+  transform: translateX(-50%);
   pointer-events: none;
   z-index: 6;
-}
-
-.bush-burst-one {
-  left: calc(-2% + (var(--bush-one-width) * 0.5) - 160px);
-}
-
-.bush-burst-two {
-  right: calc(-2% + (var(--bush-two-width) * 0.5) - 160px);
 }
 
 .leaf-burst {
@@ -284,6 +264,7 @@
     radial-gradient(circle, rgba(57, 239, 255, 0.16), rgba(57, 239, 255, 0) 58%),
     radial-gradient(circle at 50% 38%, rgba(255, 112, 234, 0.12), rgba(255, 112, 234, 0) 42%);
   filter: blur(28px);
+  z-index: 0;
 }
 
 .book-stack-shadow {
@@ -296,11 +277,14 @@
   background: radial-gradient(circle, rgba(1, 4, 10, 0.86), rgba(1, 4, 10, 0));
   transform: translateX(-50%);
   filter: blur(16px);
-  z-index: -1;
+  z-index: 0;
 }
 
 .storybook-tilt {
   position: relative;
+  z-index: 1;
+  width: var(--book-width);
+  max-width: 100%;
   will-change: transform;
   transform-style: preserve-3d;
 }
@@ -311,12 +295,13 @@
   --book-shift-x-md: 0px;
   --book-shift-y-md: 0px;
   position: relative;
+  width: 100%;
   transform-style: preserve-3d;
 }
 
 .storybook {
   position: relative;
-  width: min(780px, 100%);
+  width: 100%;
   aspect-ratio: 1.34 / 1;
   perspective: 2200px;
 }
@@ -691,7 +676,7 @@
   }
 
   50% {
-    transform: translate3d(0, -12px, 0);
+    transform: translate3d(0, -4px, 0);
   }
 }
 
@@ -747,9 +732,13 @@
 }
 
 @media (max-width: 1024px) {
+  .page-shell {
+    --book-width: min(720px, calc(100vw - 44px));
+  }
+
   .scene-backdrop {
-    --bush-one-width: min(48vw, 560px);
-    --bush-two-width: min(50vw, 590px);
+    --bush-left-width: min(50vw, 620px);
+    --bush-right-width: min(46vw, 560px);
   }
 
   .pandora-backdrop {
@@ -757,24 +746,12 @@
     inset: -2% -5%;
   }
 
-  .bush-layer-one {
+  .bush-cluster-left {
     left: -6%;
   }
 
-  .bush-layer-two {
+  .bush-cluster-right {
     right: -6%;
-  }
-
-  .bush-burst-one {
-    left: calc(-6% + (var(--bush-one-width) * 0.5) - 140px);
-  }
-
-  .bush-burst-two {
-    right: calc(-6% + (var(--bush-two-width) * 0.5) - 140px);
-  }
-
-  .storybook {
-    width: min(720px, 100%);
   }
 
   .cover-name {
@@ -783,17 +760,17 @@
 }
 
 @media (max-width: 720px) {
+  .page-shell {
+    --book-width: min(680px, calc(100vw - 16px));
+  }
+
   .scene-backdrop {
-    --bush-one-width: 56vw;
-    --bush-two-width: 58vw;
+    --bush-left-width: 58vw;
+    --bush-right-width: 54vw;
   }
 
   .page-shell {
     padding: 14px 8px;
-  }
-
-  .storybook {
-    width: min(680px, 100%);
   }
 
   .paper-side {
@@ -870,25 +847,17 @@
     font-size: 1rem;
   }
 
-  .bush-layer-one {
+  .bush-cluster-left {
     left: -10%;
   }
 
-  .bush-layer-two {
+  .bush-cluster-right {
     right: -10%;
   }
 
   .bush-burst {
-    bottom: 6%;
-    width: 210px;
+    bottom: 13%;
+    width: min(72%, 210px);
     height: 170px;
-  }
-
-  .bush-burst-one {
-    left: calc(-10% + (var(--bush-one-width) * 0.5) - 105px);
-  }
-
-  .bush-burst-two {
-    right: calc(-10% + (var(--bush-two-width) * 0.5) - 105px);
   }
 }

@@ -321,56 +321,60 @@ function App() {
           ))}
         </div>
 
-        <motion.img
-          className="bush-layer bush-layer-one"
-          src={bushes1}
-          alt=""
-          draggable={false}
-          initial={{ opacity: 0, y: 170, scale: 0.92 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 1.25, delay: 0.86, ease: [0.2, 0.9, 0.22, 1] }}
-        />
+        <div className="bush-cluster bush-cluster-left">
+          <motion.img
+            className="bush-layer"
+            src={bushes2}
+            alt=""
+            draggable={false}
+            initial={{ opacity: 0, y: 170, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1.25, delay: 0.86, ease: [0.2, 0.9, 0.22, 1] }}
+          />
 
-        <motion.img
-          className="bush-layer bush-layer-two"
-          src={bushes2}
-          alt=""
-          draggable={false}
-          initial={{ opacity: 0, y: 210, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 1.35, delay: 1.06, ease: [0.2, 0.9, 0.22, 1] }}
-        />
-
-        <div className="bush-burst bush-burst-one">
-          {leafBurstParticles.map((particle, index) => (
-            <span
-              key={`burst-left-${index}`}
-              className={`leaf-burst leaf-burst-${particle.hue}`}
-              style={{
-                '--leaf-x': `${particle.x}px`,
-                '--leaf-y': `${particle.y}px`,
-                '--leaf-size': `${particle.size}px`,
-                '--leaf-delay': `${particle.delay}s`,
-                '--leaf-rotate': `${particle.rotate}deg`,
-              }}
-            ></span>
-          ))}
+          <div className="bush-burst">
+            {leafBurstParticles.map((particle, index) => (
+              <span
+                key={`burst-left-${index}`}
+                className={`leaf-burst leaf-burst-${particle.hue}`}
+                style={{
+                  '--leaf-x': `${particle.x * 0.92}px`,
+                  '--leaf-y': `${particle.y * 0.92}px`,
+                  '--leaf-size': `${particle.size}px`,
+                  '--leaf-delay': `${particle.delay}s`,
+                  '--leaf-rotate': `${particle.rotate}deg`,
+                }}
+              ></span>
+            ))}
+          </div>
         </div>
 
-        <div className="bush-burst bush-burst-two">
-          {leafBurstParticles.map((particle, index) => (
-            <span
-              key={`burst-right-${index}`}
-              className={`leaf-burst leaf-burst-${particle.hue}`}
-              style={{
-                '--leaf-x': `${particle.x * 0.88}px`,
-                '--leaf-y': `${particle.y * 0.92}px`,
-                '--leaf-size': `${particle.size}px`,
-                '--leaf-delay': `${particle.delay + 0.14}s`,
-                '--leaf-rotate': `${particle.rotate * -1}deg`,
-              }}
-            ></span>
-          ))}
+        <div className="bush-cluster bush-cluster-right">
+          <motion.img
+            className="bush-layer"
+            src={bushes1}
+            alt=""
+            draggable={false}
+            initial={{ opacity: 0, y: 210, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1.35, delay: 1.06, ease: [0.2, 0.9, 0.22, 1] }}
+          />
+
+          <div className="bush-burst">
+            {leafBurstParticles.map((particle, index) => (
+              <span
+                key={`burst-right-${index}`}
+                className={`leaf-burst leaf-burst-${particle.hue}`}
+                style={{
+                  '--leaf-x': `${particle.x * 0.84}px`,
+                  '--leaf-y': `${particle.y * 0.88}px`,
+                  '--leaf-size': `${particle.size}px`,
+                  '--leaf-delay': `${particle.delay + 0.14}s`,
+                  '--leaf-rotate': `${particle.rotate * -1}deg`,
+                }}
+              ></span>
+            ))}
+          </div>
         </div>
 
         <div className="mote-layer">

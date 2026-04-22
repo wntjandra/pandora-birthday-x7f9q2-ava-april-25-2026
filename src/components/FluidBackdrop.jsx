@@ -1,66 +1,19 @@
 import { useEffect, useRef } from 'react'
-import fluidSource from '../../vendor/pavel-fluid/script.js?raw'
-import ditheringTextureUrl from '../../vendor/pavel-fluid/LDR_LLL1_0.png'
 
-const transformedFluidSource = buildFluidSource(ditheringTextureUrl)
+const particlePalette = [
+  { core: 'rgba(206, 113, 255, 0.44)', edge: 'rgba(206, 113, 255, 0)' },
+  { core: 'rgba(101, 216, 255, 0.4)', edge: 'rgba(101, 216, 255, 0)' },
+  { core: 'rgba(255, 122, 224, 0.3)', edge: 'rgba(255, 122, 224, 0)' },
+]
 
-function buildFluidSource(textureUrl) {
-  let source = fluidSource
+const ripplePalette = [
+  'rgba(184, 101, 255, 0.28)',
+  'rgba(84, 198, 255, 0.24)',
+  'rgba(255, 118, 227, 0.18)',
+]
 
-  source = source.replace(
-    /\/\/ Mobile promo section[\s\S]*?\/\/ Simulation section/,
-    '// Simulation section',
-  )
-  source = source.replace(
-    "const canvas = document.getElementsByTagName('canvas')[0];",
-    'const canvas = FLUID_CANVAS;',
-  )
-  source = source.replace('startGUI();', '// GUI disabled in this integration')
-  source = source.replace(
-    "let ditheringTexture = createTextureAsync('LDR_LLL1_0.png');",
-    `let ditheringTexture = createTextureAsync(${JSON.stringify(textureUrl)});`,
-  )
-  source = source.replace('SIM_RESOLUTION: 128,', 'SIM_RESOLUTION: 96,')
-  source = source.replace('DYE_RESOLUTION: 1024,', 'DYE_RESOLUTION: 512,')
-  source = source.replace('DENSITY_DISSIPATION: 1,', 'DENSITY_DISSIPATION: 2.6,')
-  source = source.replace('VELOCITY_DISSIPATION: 0.2,', 'VELOCITY_DISSIPATION: 3.1,')
-  source = source.replace('PRESSURE: 0.8,', 'PRESSURE: 0.12,')
-  source = source.replace('PRESSURE_ITERATIONS: 20,', 'PRESSURE_ITERATIONS: 14,')
-  source = source.replace('CURL: 30,', 'CURL: 18,')
-  source = source.replace('SPLAT_RADIUS: 0.25,', 'SPLAT_RADIUS: 0.38,')
-  source = source.replace('SPLAT_FORCE: 6000,', 'SPLAT_FORCE: 2800,')
-  source = source.replace('SHADING: true,', 'SHADING: false,')
-  source = source.replace('COLORFUL: true,', 'COLORFUL: false,')
-  source = source.replace('TRANSPARENT: false,', 'TRANSPARENT: true,')
-  source = source.replace('BLOOM_ITERATIONS: 8,', 'BLOOM_ITERATIONS: 6,')
-  source = source.replace('BLOOM_RESOLUTION: 256,', 'BLOOM_RESOLUTION: 128,')
-  source = source.replace('BLOOM_INTENSITY: 0.8,', 'BLOOM_INTENSITY: 0.42,')
-  source = source.replace('BLOOM_THRESHOLD: 0.6,', 'BLOOM_THRESHOLD: 0.12,')
-  source = source.replace('BLOOM_SOFT_KNEE: 0.7,', 'BLOOM_SOFT_KNEE: 0.85,')
-  source = source.replace('SUNRAYS: true,', 'SUNRAYS: false,')
-  source = source.replace(
-    /function generateColor \(\) \{[\s\S]*?return c;\n\}/,
-    `function generateColor () {
-    const palette = [
-        { r: 0.74, g: 0.28, b: 1.0 },
-        { r: 0.36, g: 0.79, b: 1.0 },
-        { r: 1.0, g: 0.36, b: 0.88 },
-        { r: 0.54, g: 0.52, b: 1.0 }
-    ];
-    const chosen = palette[Math.floor(Math.random() * palette.length)];
-    return {
-        r: chosen.r * 0.22,
-        g: chosen.g * 0.2,
-        b: chosen.b * 0.22
-    };
-}`,
-  )
-  source = source.replace(
-    '    requestAnimationFrame(update);',
-    '    if (!window.__AVA_PAVEL_FLUID_STOP__) window.__AVA_PAVEL_FLUID_RAF__ = requestAnimationFrame(update);',
-  )
-
-  return `const ga = window.ga || (() => {});\n${source}`
+function randomFrom(list) {
+  return list[Math.floor(Math.random() * list.length)]
 }
 
 export default function FluidBackdrop() {
@@ -69,26 +22,182 @@ export default function FluidBackdrop() {
   useEffect(() => {
     const canvas = canvasRef.current
 
-    if (!canvas || window.__AVA_PAVEL_FLUID_ACTIVE__) {
+    if (!canvas) {
       return undefined
     }
 
-    window.__AVA_PAVEL_FLUID_ACTIVE__ = true
-    window.__AVA_PAVEL_FLUID_STOP__ = false
+    const context = canvas.getContext('2d')
 
-    try {
-      const runner = new Function('FLUID_CANVAS', 'window', 'document', transformedFluidSource)
-      runner(canvas, window, document)
-    } catch (error) {
-      console.error('Failed to initialize Pavel fluid backdrop.', error)
+    if (!context) {
+      return undefined
     }
 
-    return () => {
-      window.__AVA_PAVEL_FLUID_STOP__ = true
+    const particles = []
+    const ripples = []
+    const pointer = {
+      x: window.innerWidth * 0.5,
+      y: window.innerHeight * 0.55,
+      time: performance.now(),
+      down: false,
+      inside: true,
+    }
 
-      if (window.__AVA_PAVEL_FLUID_RAF__) {
-        window.cancelAnimationFrame(window.__AVA_PAVEL_FLUID_RAF__)
+    let rafId = 0
+    let lastEmission = 0
+    let dpr = 1
+
+    function resizeCanvas() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2)
+      canvas.width = Math.round(window.innerWidth * dpr)
+      canvas.height = Math.round(window.innerHeight * dpr)
+      canvas.style.width = `${window.innerWidth}px`
+      canvas.style.height = `${window.innerHeight}px`
+      context.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+
+    function pushParticles(x, y, speed, pointerDown) {
+      const total = pointerDown ? 6 : 4
+
+      for (let index = 0; index < total; index += 1) {
+        const angle = Math.random() * Math.PI * 2
+        const burst = 0.35 + Math.random() * 0.8 + speed * 0.7
+
+        particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * burst * 0.7,
+          vy: Math.sin(angle) * burst * 0.35 - (0.4 + Math.random() * 0.9),
+          radius: 10 + Math.random() * 18 + speed * 6,
+          life: 1,
+          fade: 0.015 + Math.random() * 0.018,
+          drift: 0.004 + Math.random() * 0.012,
+          color: randomFrom(particlePalette),
+        })
       }
+
+      ripples.push({
+        x,
+        y,
+        radius: pointerDown ? 16 : 10,
+        growth: pointerDown ? 3.2 : 2.2,
+        life: pointerDown ? 0.34 : 0.22,
+        fade: pointerDown ? 0.013 : 0.017,
+        color: randomFrom(ripplePalette),
+        lineWidth: pointerDown ? 2.8 : 1.8,
+      })
+    }
+
+    function handlePointerMove(event) {
+      const now = performance.now()
+      const dx = event.clientX - pointer.x
+      const dy = event.clientY - pointer.y
+      const dt = Math.max(now - pointer.time, 16)
+      const speed = Math.min(Math.hypot(dx, dy) / dt, 2.2)
+
+      pointer.x = event.clientX
+      pointer.y = event.clientY
+      pointer.time = now
+      pointer.inside = true
+
+      if (now - lastEmission > 18) {
+        pushParticles(pointer.x, pointer.y, speed, event.buttons > 0 || pointer.down)
+        lastEmission = now
+      }
+    }
+
+    function handlePointerDown(event) {
+      pointer.down = true
+      pointer.x = event.clientX
+      pointer.y = event.clientY
+      pushParticles(pointer.x, pointer.y, 1.2, true)
+    }
+
+    function handlePointerUp() {
+      pointer.down = false
+    }
+
+    function handlePointerLeave() {
+      pointer.inside = false
+      pointer.down = false
+    }
+
+    function drawGlow(x, y, radius, alpha, color) {
+      const gradient = context.createRadialGradient(x, y, 0, x, y, radius)
+
+      gradient.addColorStop(0, color.core.replace(/[\d.]+\)$/, `${alpha})`))
+      gradient.addColorStop(1, color.edge)
+
+      context.fillStyle = gradient
+      context.beginPath()
+      context.arc(x, y, radius, 0, Math.PI * 2)
+      context.fill()
+    }
+
+    function render() {
+      context.clearRect(0, 0, window.innerWidth, window.innerHeight)
+
+      for (let index = ripples.length - 1; index >= 0; index -= 1) {
+        const ripple = ripples[index]
+
+        ripple.radius += ripple.growth
+        ripple.life -= ripple.fade
+
+        if (ripple.life <= 0) {
+          ripples.splice(index, 1)
+          continue
+        }
+
+        context.save()
+        context.beginPath()
+        context.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2)
+        context.strokeStyle = ripple.color.replace(/[\d.]+\)$/, `${ripple.life})`)
+        context.lineWidth = ripple.lineWidth
+        context.shadowBlur = 24
+        context.shadowColor = ripple.color.replace(/[\d.]+\)$/, `${Math.max(ripple.life * 0.9, 0)})`)
+        context.stroke()
+        context.restore()
+      }
+
+      for (let index = particles.length - 1; index >= 0; index -= 1) {
+        const particle = particles[index]
+
+        particle.x += particle.vx
+        particle.y += particle.vy
+        particle.vy -= particle.drift
+        particle.vx *= 0.992
+        particle.life -= particle.fade
+
+        if (particle.life <= 0) {
+          particles.splice(index, 1)
+          continue
+        }
+
+        drawGlow(particle.x, particle.y, particle.radius, particle.life * 0.34, particle.color)
+      }
+
+      if (pointer.inside && Math.random() > 0.68) {
+        pushParticles(pointer.x, pointer.y, 0.18, false)
+      }
+
+      rafId = window.requestAnimationFrame(render)
+    }
+
+    resizeCanvas()
+    render()
+
+    window.addEventListener('resize', resizeCanvas)
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerdown', handlePointerDown)
+    window.addEventListener('pointerup', handlePointerUp)
+    window.addEventListener('pointerleave', handlePointerLeave)
+
+    return () => {
+      window.cancelAnimationFrame(rafId)
+      window.removeEventListener('resize', resizeCanvas)
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerdown', handlePointerDown)
+      window.removeEventListener('pointerup', handlePointerUp)
+      window.removeEventListener('pointerleave', handlePointerLeave)
     }
   }, [])
 
