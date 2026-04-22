@@ -152,10 +152,8 @@ const FlipBookPage = forwardRef(function FlipBookPage({ page }, ref) {
       <article ref={ref} className="flip-book-page flip-book-page-cover" data-density="hard">
         <div className="cover-glow"></div>
         <div className="cover-rings"></div>
-        <p className="cover-kicker">Ava&apos;s Birthday Journal</p>
-        <p className="cover-name">AVA</p>
-        <p className="cover-date">April 25, 2026</p>
-        <p className="cover-copy">
+        <h1 className="cover-title">Ava-tar: Into the Luminous World</h1>
+        <p className="cover-copy cover-copy-front">
           Opened beneath a glowing canopy where the night never stops shimmering.
         </p>
       </article>

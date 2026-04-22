@@ -373,6 +373,9 @@
 }
 
 .flip-book-page-cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 42px 28px 32px;
   background:
     linear-gradient(160deg, rgba(20, 88, 121, 0.96), rgba(14, 28, 72, 0.98) 58%, rgba(80, 20, 87, 0.96)),
@@ -391,6 +394,31 @@
 
 .flip-book-page-cover-back .cover-rings {
   inset: auto auto 12% 50%;
+}
+
+.cover-title {
+  position: relative;
+  z-index: 1;
+  width: min(470px, 100%);
+  margin-top: 132px;
+  text-align: center;
+  font-family: var(--display);
+  font-size: clamp(2.9rem, 6vw, 4.35rem);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  color: #f7f1e3;
+  text-shadow:
+    0 0 20px rgba(82, 255, 233, 0.14),
+    0 0 34px rgba(255, 116, 235, 0.1);
+}
+
+.cover-copy-front {
+  width: min(430px, calc(100% - 40px));
+  margin-top: auto;
+  margin-bottom: 8px;
+  color: rgba(255, 229, 182, 0.9);
+  text-align: center;
+  line-height: 1.55;
 }
 
 .cover-name-back {
@@ -845,6 +873,11 @@
   .cover-name {
     margin-top: 88px;
   }
+
+  .cover-title {
+    margin-top: 110px;
+    font-size: clamp(2.5rem, 5vw, 3.7rem);
+  }
 }
 
 @media (max-width: 720px) {
@@ -903,6 +936,13 @@
     font-size: clamp(2.6rem, 11vw, 3.8rem);
   }
 
+  .cover-title {
+    width: min(320px, 100%);
+    margin-top: 70px;
+    font-size: clamp(2rem, 8.4vw, 2.8rem);
+    line-height: 1;
+  }
+
   .cover-name-back {
     margin-top: 92px;
     font-size: clamp(2.2rem, 10vw, 3.1rem);
@@ -917,6 +957,11 @@
     margin-top: 14px;
     font-size: 0.8rem;
     line-height: 1.45;
+  }
+
+  .cover-copy-front {
+    width: min(300px, calc(100% - 16px));
+    margin-bottom: 2px;
   }
 
   .cover-rings {
