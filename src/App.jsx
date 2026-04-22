@@ -62,9 +62,9 @@ const pageSpreads = [
       eyebrow: 'Living World',
       title: 'Luminous World',
       blocks: [
-        'Massive mushroom forms rose in the distance, their glowing caps casting halos through the mist in pinks, purples, and blues.',
+        'Massive mushroom-like forestry rose in the distance, their glowing caps casting halos through the mist in pinks, purples, and blues.',
         'A nearby stream carried light inside it. When Ava dipped her hand into the water, the glow gathered around her fingers as if it recognized her.',
-        'The air hummed, not like a sound, but like a connection.',
+        'The air, almost as if aware of her arrival, shifted slowly around her.',
       ],
       footer: 'The world glowed back',
     },
@@ -444,7 +444,7 @@ function App() {
     const music = new Audio(soundtrack[0])
 
     music.preload = 'auto'
-    music.volume = 0.4
+    music.volume = 0.3
     musicAudioRef.current = music
     soundtrackIndexRef.current = 0
 
@@ -461,7 +461,7 @@ function App() {
         return
       }
 
-      currentMusic.volume = 0.4
+      currentMusic.volume = 0.3
 
       const playPromise = currentMusic.play()
 
