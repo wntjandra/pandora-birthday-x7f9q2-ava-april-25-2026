@@ -1,21 +1,21 @@
 import { useEffect, useRef } from 'react'
 
 const particlePalette = [
-  { core: 'rgba(206, 113, 255, 0.42)', edge: 'rgba(206, 113, 255, 0)' },
-  { core: 'rgba(101, 216, 255, 0.4)', edge: 'rgba(101, 216, 255, 0)' },
-  { core: 'rgba(255, 122, 224, 0.28)', edge: 'rgba(255, 122, 224, 0)' },
+  { core: 'rgba(206, 113, 255, 0.48)', edge: 'rgba(206, 113, 255, 0)' },
+  { core: 'rgba(101, 216, 255, 0.46)', edge: 'rgba(101, 216, 255, 0)' },
+  { core: 'rgba(255, 122, 224, 0.34)', edge: 'rgba(255, 122, 224, 0)' },
 ]
 
 const ripplePalette = [
-  'rgba(184, 101, 255, 0.28)',
-  'rgba(84, 198, 255, 0.24)',
-  'rgba(255, 118, 227, 0.18)',
+  'rgba(184, 101, 255, 0.38)',
+  'rgba(84, 198, 255, 0.34)',
+  'rgba(255, 118, 227, 0.26)',
 ]
 
 const trailPalette = [
-  'rgba(111, 228, 255, 0.18)',
-  'rgba(194, 120, 255, 0.18)',
-  'rgba(255, 132, 230, 0.16)',
+  'rgba(111, 228, 255, 0.24)',
+  'rgba(194, 120, 255, 0.24)',
+  'rgba(255, 132, 230, 0.22)',
 ]
 
 function randomFrom(list) {
@@ -122,55 +122,88 @@ export default function FluidBackdrop({ backgroundSrc }) {
       context.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
-    function addTrail(x1, y1, x2, y2, speed, pointerDown) {
+    function addTrail(x1, y1, x2, y2, speed, pointerDown, hoverBoost = 0) {
       trails.push({
         x1,
         y1,
         x2,
         y2,
-        lineWidth: (pointerDown ? 26 : 18) + speed * 12,
-        life: pointerDown ? 0.16 : 0.12,
-        fade: pointerDown ? 0.007 : 0.0085,
+        lineWidth: (pointerDown ? 26 : 22) + speed * 14 + hoverBoost * 10,
+        life: (pointerDown ? 0.16 : 0.13) + hoverBoost * 0.035,
+        fade: pointerDown ? 0.007 : Math.max(0.0068, 0.0082 - hoverBoost * 0.0012),
         color: randomFrom(trailPalette),
       })
     }
 
-    function pushEffects(x, y, speed, pointerDown) {
+    function pushEffects(x, y, speed, pointerDown, hoverBoost = 0) {
+      const primaryRadius = (pointerDown ? 16 : 12) + speed * 8 + hoverBoost * 4
+      const primaryGrowth = (pointerDown ? 3 : 2.3) + hoverBoost * 0.8
+      const primaryLife = (pointerDown ? 0.34 : 0.23) + hoverBoost * 0.07
+      const primaryFade = Math.max(pointerDown ? 0.013 : 0.0115, 0.017 - hoverBoost * 0.0045)
+
       ripples.push({
         x,
         y,
-        radius: pointerDown ? 16 : 10,
-        growth: pointerDown ? 3 : 2.1,
-        life: pointerDown ? 0.34 : 0.22,
-        fade: pointerDown ? 0.013 : 0.017,
+        radius: primaryRadius,
+        growth: primaryGrowth,
+        life: primaryLife,
+        fade: primaryFade,
         color: randomFrom(ripplePalette),
-        lineWidth: pointerDown ? 2.6 : 1.7,
+        lineWidth: (pointerDown ? 2.6 : 2.05) + hoverBoost * 0.55,
       })
+
+      if (!pointerDown && hoverBoost > 0.2) {
+        const ghostX = x - (x - pointer.prevX) * 0.42
+        const ghostY = y - (y - pointer.prevY) * 0.42
+
+        ripples.push({
+          x: ghostX,
+          y: ghostY,
+          radius: primaryRadius * 0.72,
+          growth: primaryGrowth * 0.94,
+          life: primaryLife * 0.82,
+          fade: primaryFade * 1.08,
+          color: randomFrom(ripplePalette),
+          lineWidth: 1.5 + hoverBoost * 0.45,
+        })
+      }
 
       if (useLightMode) {
         return
       }
 
-      const totalParticles = pointerDown ? 5 : 3
+      const totalParticles = pointerDown ? 5 : Math.min(6, 4 + Math.round(hoverBoost * 2))
 
       for (let index = 0; index < totalParticles; index += 1) {
         const angle = Math.random() * Math.PI * 2
-        const burst = 0.3 + Math.random() * 0.8 + speed * 0.65
+        const burst = 0.38 + Math.random() * 0.86 + speed * 0.74 + hoverBoost * 0.4
 
         particles.push({
           x,
           y,
           vx: Math.cos(angle) * burst * 0.68,
           vy: Math.sin(angle) * burst * 0.35 - (0.28 + Math.random() * 0.75),
-          radius: 10 + Math.random() * 14 + speed * 5,
+          radius: 11 + Math.random() * 14 + speed * 5 + hoverBoost * 4,
           life: 1,
-          fade: 0.016 + Math.random() * 0.015,
+          fade: 0.015 + Math.random() * 0.014,
           drift: 0.004 + Math.random() * 0.01,
           color: randomFrom(particlePalette),
         })
       }
 
-      addTrail(pointer.prevX, pointer.prevY, x, y, speed, pointerDown)
+      addTrail(pointer.prevX, pointer.prevY, x, y, speed, pointerDown, hoverBoost)
+
+      if (!pointerDown && hoverBoost > 0.28) {
+        addTrail(
+          pointer.prevX + (x - pointer.prevX) * 0.22,
+          pointer.prevY + (y - pointer.prevY) * 0.22,
+          x,
+          y,
+          speed * 0.92,
+          false,
+          hoverBoost * 0.7,
+        )
+      }
     }
 
     function handlePointerMove(event) {
@@ -179,6 +212,7 @@ export default function FluidBackdrop({ backgroundSrc }) {
       const dy = event.clientY - pointer.y
       const dt = Math.max(now - pointer.time, 16)
       const speed = Math.min(Math.hypot(dx, dy) / dt, 2.2)
+      const hoverBoost = Math.min(1.2, 0.28 + speed * 1.55)
 
       pointer.prevX = pointer.x
       pointer.prevY = pointer.y
@@ -187,10 +221,10 @@ export default function FluidBackdrop({ backgroundSrc }) {
       pointer.time = now
       pointer.inside = true
 
-      const emissionDelay = useLightMode ? 70 : 24
+      const emissionDelay = useLightMode ? 48 : 14
 
       if (now - lastEmission > emissionDelay) {
-        pushEffects(pointer.x, pointer.y, speed, event.buttons > 0 || pointer.down)
+        pushEffects(pointer.x, pointer.y, speed, event.buttons > 0 || pointer.down, hoverBoost)
         lastEmission = now
       }
     }
@@ -201,7 +235,7 @@ export default function FluidBackdrop({ backgroundSrc }) {
       pointer.prevY = event.clientY
       pointer.x = event.clientX
       pointer.y = event.clientY
-      pushEffects(pointer.x, pointer.y, 1.2, true)
+      pushEffects(pointer.x, pointer.y, 1.2, true, 0.8)
     }
 
     function handlePointerUp() {
@@ -342,8 +376,8 @@ export default function FluidBackdrop({ backgroundSrc }) {
 
       context.restore()
 
-      if (!useLightMode && pointer.inside && Math.random() > 0.72) {
-        pushEffects(pointer.x, pointer.y, 0.18, false)
+      if (!useLightMode && pointer.inside && Math.random() > 0.66) {
+        pushEffects(pointer.x, pointer.y, 0.2, false, 0.16)
       }
 
       rafId = window.requestAnimationFrame(render)

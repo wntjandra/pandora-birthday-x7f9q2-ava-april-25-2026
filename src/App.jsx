@@ -94,12 +94,13 @@ const pageSpreads = [
   },
   {
     left: {
-      eyebrow: 'The Ridge',
+      eyebrow: 'The Bond',
       title: 'Sky Creatures',
+      className: 'compact',
       blocks: [
-        '"It\'s always changing," one of the girls said.',
-        'Ava watched the colors shift slowly, as if the whole world was dreaming.',
-        "She didn't want to leave.",
+        'One of the girls lifted her hand toward the heavens, where rivers of blue, violet, and rose light drifted above the ridge like living silk.',
+        '"The sky never keeps the same dream for long," she said softly.',
+        'Ava watched the colors move across the mist and the endless forest below until it felt less like weather and more like the whole world was breathing above her.',
       ],
       footer: 'Wonder kept moving',
     },
@@ -108,8 +109,9 @@ const pageSpreads = [
       title: null,
       className: 'compact continuation',
       blocks: [
-        'A distant cry echoed overhead. A creature soared above them, its wings long and elegant, trailing strokes of light through the air.',
-        'It circled once, then descended.',
+        'A distant cry echoed overhead. A creature soared through the glowing sky, its wings long and elegant, trailing pale strokes of light behind it.',
+        'It circled once. Then again, lower this time, hovering above them without landing and without leaving, as if it were deciding something only the sky understood.',
+        'The air around them grew still.',
       ],
       footer: null,
     },
@@ -118,10 +120,11 @@ const pageSpreads = [
     left: {
       eyebrow: 'The Bond',
       title: null,
-      className: 'continuation',
+      className: 'compact continuation',
       blocks: [
-        'Ava felt it before it landed: not fear, not surprise, but a quiet pull.',
-        'She stepped forward slowly, and the sky seemed to hold its breath with her.',
+        'Ava stepped forward... then stopped. Not because she was afraid, but because she felt that this moment mattered.',
+        'The creature hovered, watching her back. Not suspicious. Not gentle either. Only careful, like it was listening for something deeper than movement.',
+        'Before it ever touched the ground, she felt the pull of it inside her: quiet, certain, and impossible to ignore.',
       ],
       footer: 'The sky answered back',
     },
@@ -130,9 +133,9 @@ const pageSpreads = [
       title: 'Chosen',
       className: 'compact',
       blocks: [
-        'The creature lowered itself and watched her. Ava touched the long strand of hair that felt different, and she understood.',
+        'At last the creature lowered itself. Ava touched the long strand of hair that felt different, and she understood.',
         'Through tsaheylu, beings in this world could share thought, feeling, and sense directly.',
-        'The instant they connected, she felt rushing wind, endless sky, the loneliness of flying alone for so long, and then relief. The creature gave a soft, resonant call.',
+        'The instant they connected, she felt rushing wind, endless sky, the ache of flying alone for so long, and then the deep relief of being found. The creature gave a soft, resonant call.',
       ],
       footer: 'A bond made in trust',
     },
@@ -221,9 +224,9 @@ const pageSpreads = [
     },
     right: {
       eyebrow: 'Final Line',
-      title: 'Because Somewhere Deep Within Her',
+      title: 'Because Somewhere Deep, She Knew',
       className: 'closing',
-      blocks: [{ type: 'quote', text: 'the luminous world was still alive.' }],
+      blocks: [{ type: 'quote', text: 'The Luminous World Was Still Alive.' }],
       footer: 'Turn once more and the dream begins again',
     },
   },
@@ -441,7 +444,7 @@ function App() {
     const music = new Audio(soundtrack[0])
 
     music.preload = 'auto'
-    music.volume = 0.5
+    music.volume = 0.3
     musicAudioRef.current = music
     soundtrackIndexRef.current = 0
 
