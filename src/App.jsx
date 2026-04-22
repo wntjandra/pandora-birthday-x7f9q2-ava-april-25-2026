@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import HTMLFlipBook from 'react-pageflip'
 import Tilt from 'react-parallax-tilt'
 import backgroundPandora from './assets/BackgroundPandora.png'
 import bushes1 from './assets/Bushes1.png'
 import bushes2 from './assets/Bushes2.png'
+import pageFlipNoise from './assets/pageFlipNoise.mp3'
 import FluidBackdrop from './components/FluidBackdrop.jsx'
 import './App.css'
 
@@ -120,68 +122,138 @@ const leafBurstParticles = [
   { x: 74, y: -176, size: 10, delay: 0.4, rotate: -20, hue: 'blue' },
 ]
 
-const turnNotesForward = [523.25, 659.25, 783.99]
-const turnNotesBackward = [...turnNotesForward].reverse()
+const totalStoryPages = pageSpreads.length * 2
+const storyPages = pageSpreads.flatMap((spread, spreadIndex) => [
+  {
+    key: `spread-${spreadIndex}-left`,
+    kind: 'story',
+    side: 'left',
+    pageNumber: spreadIndex * 2 + 1,
+    ...spread.left,
+  },
+  {
+    key: `spread-${spreadIndex}-right`,
+    kind: 'story',
+    side: 'right',
+    pageNumber: spreadIndex * 2 + 2,
+    ...spread.right,
+  },
+])
 
-function playTone(context, frequency, startAt, duration = 0.22) {
-  const oscillator = context.createOscillator()
-  const gain = context.createGain()
+const bookPages = [
+  { key: 'cover-front', kind: 'cover-front' },
+  ...storyPages,
+  { key: 'cover-back', kind: 'cover-back' },
+]
 
-  oscillator.type = 'triangle'
-  oscillator.frequency.setValueAtTime(frequency, startAt)
+const FlipBookPage = forwardRef(function FlipBookPage({ page }, ref) {
+  if (page.kind === 'cover-front') {
+    return (
+      <article ref={ref} className="flip-book-page flip-book-page-cover" data-density="hard">
+        <div className="cover-glow"></div>
+        <div className="cover-rings"></div>
+        <p className="cover-kicker">Ava&apos;s Birthday Journal</p>
+        <p className="cover-name">AVA</p>
+        <p className="cover-date">April 25, 2026</p>
+        <p className="cover-copy">
+          Opened beneath a glowing canopy where the night never stops shimmering.
+        </p>
+      </article>
+    )
+  }
 
-  gain.gain.setValueAtTime(0.0001, startAt)
-  gain.gain.exponentialRampToValueAtTime(0.12, startAt + 0.04)
-  gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration)
+  if (page.kind === 'cover-back') {
+    return (
+      <article
+        ref={ref}
+        className="flip-book-page flip-book-page-cover flip-book-page-cover-back"
+        data-density="hard"
+      >
+        <div className="cover-glow"></div>
+        <div className="cover-rings"></div>
+        <p className="cover-kicker">For Ava</p>
+        <p className="cover-name cover-name-back">AVA</p>
+        <p className="cover-copy cover-copy-back">
+          Happy Birthday. The whole glowing night was built for you.
+        </p>
+      </article>
+    )
+  }
 
-  oscillator.connect(gain)
-  gain.connect(context.destination)
-  oscillator.start(startAt)
-  oscillator.stop(startAt + duration)
-}
-
-function PaperSide({ page, side, countText }) {
   return (
-    <section className={`paper-side paper-side-${side}`}>
-      <p className="paper-eyebrow">{page.eyebrow}</p>
-      <h2>{page.title}</h2>
-      <p className="paper-body">{page.body}</p>
-      <div className="paper-footer-row">
-        <p className="paper-footer">{page.footer}</p>
-        {countText ? <span className="paper-count">{countText}</span> : null}
+    <article
+      ref={ref}
+      className={`flip-book-page flip-book-page-story flip-book-page-story-${page.side}`}
+      data-density="soft"
+    >
+      <div className="flip-book-page-inner">
+        <p className="paper-eyebrow">{page.eyebrow}</p>
+        <h2>{page.title}</h2>
+        <p className="paper-body">{page.body}</p>
+        <div className="paper-footer-row">
+          <p className="paper-footer">{page.footer}</p>
+          <span className="paper-count">
+            {String(page.pageNumber).padStart(2, '0')} / {String(totalStoryPages).padStart(2, '0')}
+          </span>
+        </div>
       </div>
-    </section>
+    </article>
   )
-}
+})
 
 function App() {
   const [bookVisible, setBookVisible] = useState(false)
-  const [bookOpen, setBookOpen] = useState(false)
-  const [pageIndex, setPageIndex] = useState(0)
-  const [turningPage, setTurningPage] = useState(false)
-  const [turnDirection, setTurnDirection] = useState('forward')
-  const [turnToken, setTurnToken] = useState(0)
-  const audioContextRef = useRef(null)
+  const [bookReady, setBookReady] = useState(false)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [bookState, setBookState] = useState('read')
   const storybookShellRef = useRef(null)
-
-  const pageCountLabel = `${String(pageIndex + 1).padStart(2, '0')} / ${String(
-    pageSpreads.length,
-  ).padStart(2, '0')}`
-  const currentSpread = pageSpreads[pageIndex]
-  const nextIndex = (pageIndex + 1) % pageSpreads.length
-  const previousIndex = (pageIndex - 1 + pageSpreads.length) % pageSpreads.length
-  const nextSpread = pageSpreads[nextIndex]
-  const previousSpread = pageSpreads[previousIndex]
+  const flipBookRef = useRef(null)
+  const audioRef = useRef(null)
+  const autoOpenedRef = useRef(false)
+  const suppressNextFlipSoundRef = useRef(false)
 
   useEffect(() => {
     const showBookTimer = window.setTimeout(() => setBookVisible(true), 1050)
-    const openBookTimer = window.setTimeout(() => setBookOpen(true), 2080)
 
     return () => {
       window.clearTimeout(showBookTimer)
-      window.clearTimeout(openBookTimer)
     }
   }, [])
+
+  useEffect(() => {
+    const audio = new Audio(pageFlipNoise)
+
+    audio.preload = 'auto'
+    audio.volume = 0.45
+    audioRef.current = audio
+
+    return () => {
+      audio.pause()
+      audioRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!bookVisible || !bookReady || autoOpenedRef.current) {
+      return undefined
+    }
+
+    const openBookTimer = window.setTimeout(() => {
+      const pageFlip = flipBookRef.current?.pageFlip?.()
+
+      if (!pageFlip) {
+        return
+      }
+
+      autoOpenedRef.current = true
+      suppressNextFlipSoundRef.current = true
+      pageFlip.flipNext('bottom')
+    }, 1100)
+
+    return () => {
+      window.clearTimeout(openBookTimer)
+    }
+  }, [bookVisible, bookReady])
 
   function setBookPose(normalizedX, normalizedY) {
     const shell = storybookShellRef.current
@@ -202,67 +274,47 @@ function App() {
     setBookPose(0, 0)
   }
 
-  async function ensureAudioContext() {
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext
+  function playFlipNoise() {
+    const audio = audioRef.current
 
-    if (!AudioContextClass) {
-      return false
-    }
-
-    if (!audioContextRef.current) {
-      audioContextRef.current = new AudioContextClass()
-    }
-
-    if (audioContextRef.current.state === 'suspended') {
-      await audioContextRef.current.resume()
-    }
-
-    return audioContextRef.current.state === 'running'
-  }
-
-  function playSequence(notes) {
-    const context = audioContextRef.current
-
-    if (!context || context.state !== 'running') {
+    if (!audio) {
       return
     }
 
-    const startAt = context.currentTime + 0.05
-
-    notes.forEach((note, index) => {
-      playTone(context, note, startAt + index * 0.09)
-    })
+    audio.currentTime = 0
+    audio.play().catch(() => {})
   }
 
-  async function handleTurnPage(direction) {
-    if (!bookOpen || turningPage) {
+  function handleBookFlip(event) {
+    setCurrentPage(event.data)
+
+    if (suppressNextFlipSoundRef.current) {
+      suppressNextFlipSoundRef.current = false
       return
     }
 
-    const targetIndex = direction === 'forward' ? nextIndex : previousIndex
-    const isReady = await ensureAudioContext()
-
-    setTurnDirection(direction)
-    setTurningPage(true)
-    setTurnToken((token) => token + 1)
-
-    window.setTimeout(() => {
-      setPageIndex(targetIndex)
-    }, 360)
-
-    window.setTimeout(() => {
-      setTurningPage(false)
-    }, 940)
-
-    if (isReady) {
-      playSequence(direction === 'forward' ? turnNotesForward : turnNotesBackward)
-    }
+    playFlipNoise()
   }
 
-  const turningFrontPage =
-    turnDirection === 'forward' ? currentSpread.right : currentSpread.left
-  const turningBackPage =
-    turnDirection === 'forward' ? nextSpread.left : previousSpread.right
+  function handleBookInit(event) {
+    setBookReady(true)
+    setCurrentPage(event?.data?.page ?? 0)
+  }
+
+  function handleTurnPage(direction) {
+    const pageFlip = flipBookRef.current?.pageFlip?.()
+
+    if (!pageFlip || bookState === 'flipping') {
+      return
+    }
+
+    if (direction === 'forward') {
+      pageFlip.flipNext('bottom')
+      return
+    }
+
+    pageFlip.flipPrev('bottom')
+  }
 
   return (
     <MotionMain
@@ -414,81 +466,55 @@ function App() {
               onLeave={resetBookPose}
             >
               <div ref={storybookShellRef} className="storybook-shell">
-                <div className="storybook">
-                  <div className="storybook-back" aria-hidden="true"></div>
-
-                  <div className="storybook-pages">
-                    <div className="paper-spread">
-                      <PaperSide page={currentSpread.left} side="left" />
-                      <div className="paper-spine" aria-hidden="true"></div>
-                      <PaperSide
-                        page={currentSpread.right}
-                        side="right"
-                        countText={pageCountLabel}
-                      />
-                    </div>
-
-                    <AnimatePresence initial={false}>
-                      {turningPage ? (
-                        <motion.div
-                          key={turnToken}
-                          className={`page-turn-sheet page-turn-sheet-${turnDirection}`}
-                          initial={{ rotateY: 0 }}
-                          animate={{ rotateY: turnDirection === 'forward' ? -178 : 178 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.92, ease: [0.35, 0.02, 0.2, 1] }}
-                        >
-                          <div className="page-turn-face page-turn-front">
-                            <p className="page-turn-label">{turningFrontPage.eyebrow}</p>
-                            <p className="page-turn-title">{turningFrontPage.title}</p>
-                            <div className="page-turn-glow"></div>
-                          </div>
-                          <div className="page-turn-face page-turn-back">
-                            <p className="page-turn-label">{turningBackPage.eyebrow}</p>
-                            <p className="page-turn-title">{turningBackPage.title}</p>
-                            <div className="page-turn-glow"></div>
-                          </div>
-                        </motion.div>
-                      ) : null}
-                    </AnimatePresence>
-
-                    <button
-                      type="button"
-                      className="book-hitarea book-hitarea-left"
-                      onClick={() => handleTurnPage('backward')}
-                      disabled={!bookOpen || turningPage}
-                      aria-label="Turn the book backward"
-                    >
-                      <span className="sr-only">Turn the book backward</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      className="book-hitarea book-hitarea-right"
-                      onClick={() => handleTurnPage('forward')}
-                      disabled={!bookOpen || turningPage}
-                      aria-label="Turn the book forward"
-                    >
-                      <span className="sr-only">Turn the book forward</span>
-                    </button>
-                  </div>
-
-                  <motion.div
-                    className={`storybook-cover ${bookOpen ? 'is-open' : ''}`}
-                    initial={false}
-                    animate={{ rotateY: bookOpen ? -166 : 0 }}
-                    transition={{ duration: 1.35, ease: [0.2, 0.9, 0.2, 1] }}
+                <div className="flip-book-shell">
+                  <HTMLFlipBook
+                    ref={flipBookRef}
+                    width={390}
+                    height={560}
+                    size="stretch"
+                    minWidth={280}
+                    maxWidth={390}
+                    minHeight={400}
+                    maxHeight={560}
+                    drawShadow={true}
+                    maxShadowOpacity={0.24}
+                    showCover={true}
+                    mobileScrollSupport={true}
+                    swipeDistance={24}
+                    flippingTime={900}
+                    startZIndex={10}
+                    useMouseEvents={false}
+                    className="flip-book"
+                    onInit={handleBookInit}
+                    onFlip={handleBookFlip}
+                    onChangeState={(event) => setBookState(event.data)}
                   >
-                    <div className="cover-glow"></div>
-                    <div className="cover-rings"></div>
-                    <p className="cover-kicker">Ava&apos;s Birthday Journal</p>
-                    <p className="cover-name">AVA</p>
-                    <p className="cover-date">April 25, 2026</p>
-                    <p className="cover-copy">
-                      Opened beneath a glowing canopy where the night never stops
-                      shimmering.
-                    </p>
-                  </motion.div>
+                    {bookPages.map((page) => (
+                      <FlipBookPage key={page.key} page={page} />
+                    ))}
+                  </HTMLFlipBook>
+
+                  <button
+                    type="button"
+                    className="book-hitarea book-hitarea-left"
+                    onClick={() => handleTurnPage('backward')}
+                    disabled={!bookReady || bookState === 'flipping' || currentPage <= 0}
+                    aria-label="Turn the book backward"
+                  >
+                    <span className="sr-only">Turn the book backward</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="book-hitarea book-hitarea-right"
+                    onClick={() => handleTurnPage('forward')}
+                    disabled={
+                      !bookReady || bookState === 'flipping' || currentPage >= bookPages.length - 1
+                    }
+                    aria-label="Turn the book forward"
+                  >
+                    <span className="sr-only">Turn the book forward</span>
+                  </button>
                 </div>
               </div>
             </Tilt>
