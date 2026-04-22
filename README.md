@@ -4,8 +4,8 @@ Small interactive birthday card built with React and Vite, prepared for GitHub P
 
 ## What is configured
 
-- `homepage` points to `https://wntjandra.github.io/pandora-birthday-x7f9q2-ava-april-25-2026`
-- Vite `base` is set to `/pandora-birthday-x7f9q2-ava-april-25-2026/`
+- `homepage` points to `https://wntjandra.github.io/neytiri-metkayina-spider-payakan-eywa-skimwings-quaritch-loak-tulkun-omaticaya`
+- Vite `base` is derived from `homepage`, so future repo renames only need one URL update
 - `gh-pages` deploy script publishes `dist`
 - `postbuild` copies `dist/index.html` to `dist/404.html` so GitHub Pages can serve the SPA on refresh
 - Audio is tap-activated so it behaves correctly on mobile browsers
@@ -60,4 +60,4 @@ After the first deploy creates the `gh-pages` branch:
 
 Your live site URL will be:
 
-`https://wntjandra.github.io/pandora-birthday-x7f9q2-ava-april-25-2026`
+`https://wntjandra.github.io/neytiri-metkayina-spider-payakan-eywa-skimwings-quaritch-loak-tulkun-omaticaya`
