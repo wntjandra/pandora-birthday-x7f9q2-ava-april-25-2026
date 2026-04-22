@@ -1,66 +1,166 @@
 import { useEffect, useRef } from 'react'
 
-const particlePalette = [
-  { core: 'rgba(206, 113, 255, 0.42)', edge: 'rgba(206, 113, 255, 0)' },
-  { core: 'rgba(101, 216, 255, 0.4)', edge: 'rgba(101, 216, 255, 0)' },
-  { core: 'rgba(255, 122, 224, 0.28)', edge: 'rgba(255, 122, 224, 0)' },
-]
+const vertexShaderSource = `
+attribute vec2 a_position;
+varying vec2 v_uv;
 
-const ripplePalette = [
-  'rgba(184, 101, 255, 0.28)',
-  'rgba(84, 198, 255, 0.24)',
-  'rgba(255, 118, 227, 0.18)',
-]
+void main() {
+  v_uv = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}
+`
 
-const trailPalette = [
-  'rgba(111, 228, 255, 0.18)',
-  'rgba(194, 120, 255, 0.18)',
-  'rgba(255, 132, 230, 0.16)',
-]
+const fragmentShaderSource = `
+precision highp float;
 
-function randomFrom(list) {
-  return list[Math.floor(Math.random() * list.length)]
+varying vec2 v_uv;
+
+uniform sampler2D u_texture;
+uniform vec2 u_resolution;
+uniform vec2 u_pointer;
+uniform float u_time;
+uniform float u_intensity;
+
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
 }
 
-function drawCoverImage(context, image, canvasWidth, canvasHeight, offsetX, offsetY, scale) {
-  if (!image || !image.naturalWidth || !image.naturalHeight) {
-    return
+float noise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+
+  float a = hash(i);
+  float b = hash(i + vec2(1.0, 0.0));
+  float c = hash(i + vec2(0.0, 1.0));
+  float d = hash(i + vec2(1.0, 1.0));
+
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+
+mat2 rotate2d(float angle) {
+  float s = sin(angle);
+  float c = cos(angle);
+  return mat2(c, -s, s, c);
+}
+
+float fbm(vec2 p) {
+  float value = 0.0;
+  float amplitude = 0.5;
+
+  for (int index = 0; index < 5; index += 1) {
+    value += amplitude * noise(p);
+    p = rotate2d(0.72) * p * 2.02 + vec2(16.7, 9.2);
+    amplitude *= 0.5;
   }
 
-  const sourceRatio = image.naturalWidth / image.naturalHeight
-  const targetRatio = canvasWidth / canvasHeight
+  return value;
+}
 
-  let sourceWidth = image.naturalWidth
-  let sourceHeight = image.naturalHeight
+float ridge(float value) {
+  value = abs(value);
+  value = 0.62 - value;
+  return value * value;
+}
 
-  if (sourceRatio > targetRatio) {
-    sourceHeight = image.naturalHeight
-    sourceWidth = sourceHeight * targetRatio
-  } else {
-    sourceWidth = image.naturalWidth
-    sourceHeight = sourceWidth / targetRatio
+void main() {
+  vec2 uv = v_uv;
+  float aspect = u_resolution.x / max(u_resolution.y, 1.0);
+  vec2 centered = uv - 0.5;
+  centered.x *= aspect;
+
+  vec2 pointer = u_pointer - 0.5;
+  pointer.x *= aspect;
+
+  float t = u_time * 0.08;
+
+  vec2 baseFlow = centered * 1.9;
+  vec2 warpA = vec2(
+    fbm(baseFlow + vec2(t * 1.4, -t * 0.6)),
+    fbm(rotate2d(1.4) * baseFlow + vec2(-t * 0.8, t * 1.2))
+  );
+  vec2 warpB = vec2(
+    fbm(baseFlow * 1.8 - warpA * 2.2 + vec2(t * 0.7, t * 0.25)),
+    fbm(rotate2d(-1.0) * baseFlow * 1.6 + warpA * 1.6 - vec2(t * 0.35, t * 0.9))
+  );
+
+  vec2 flow = baseFlow + (warpA - 0.5) * 1.1 + (warpB - 0.5) * 0.9;
+  float pointerFalloff = exp(-length(centered - pointer) * 4.5);
+  flow += normalize(centered - pointer + vec2(0.001)) * pointerFalloff * 0.12 * sin(t * 6.0);
+
+  float marble = fbm(flow * 2.6);
+  float contour = fbm(flow * 4.8 + marble * 2.0 + t);
+  float ribbons = ridge(contour - 0.5) * 6.0;
+  ribbons = smoothstep(0.03, 0.38, ribbons);
+  float smoke = fbm(flow * 3.4 - vec2(t * 0.5, -t * 0.9));
+  float cavities = smoothstep(0.18, 0.82, marble * 0.55 + smoke * 0.65);
+
+  vec2 distortion = flow / vec2(max(aspect, 1.0), 1.0) * (0.02 + u_intensity * 0.015);
+  vec2 sampleUv = clamp(uv + distortion, 0.0, 1.0);
+  vec3 base = texture2D(u_texture, sampleUv).rgb;
+
+  vec3 deep = vec3(0.04, 0.015, 0.09);
+  vec3 plum = vec3(0.18, 0.06, 0.32);
+  vec3 violet = vec3(0.44, 0.17, 0.67);
+  vec3 glow = vec3(0.78, 0.45, 0.98);
+  vec3 coral = vec3(0.92, 0.49, 0.56);
+
+  vec3 fluid = mix(deep, plum, cavities);
+  fluid = mix(fluid, violet, smoothstep(0.3, 0.95, marble));
+  fluid += glow * ribbons * 0.85;
+  fluid += coral * pow(max(ribbons - 0.72, 0.0), 2.0) * 1.6;
+
+  float pooled = smoothstep(1.25, 0.12, length(centered + (warpB - 0.5) * 0.24));
+  vec3 combined = mix(base * 0.3, fluid, 0.68 * pooled);
+  combined += base * 0.16;
+  combined += ribbons * 0.06;
+
+  float vignette = smoothstep(1.4, 0.2, length(centered));
+  combined *= mix(0.58, 1.08, vignette);
+
+  gl_FragColor = vec4(combined, 1.0);
+}
+`
+
+function createShader(gl, type, source) {
+  const shader = gl.createShader(type)
+
+  if (!shader) {
+    return null
   }
 
-  const cropX = (image.naturalWidth - sourceWidth) * 0.5 + offsetX
-  const cropY = (image.naturalHeight - sourceHeight) * 0.5 + offsetY
-  const safeCropX = Math.max(0, Math.min(cropX, image.naturalWidth - sourceWidth))
-  const safeCropY = Math.max(0, Math.min(cropY, image.naturalHeight - sourceHeight))
-  const drawWidth = canvasWidth * scale
-  const drawHeight = canvasHeight * scale
-  const drawX = (canvasWidth - drawWidth) * 0.5
-  const drawY = (canvasHeight - drawHeight) * 0.5
+  gl.shaderSource(shader, source)
+  gl.compileShader(shader)
 
-  context.drawImage(
-    image,
-    safeCropX,
-    safeCropY,
-    sourceWidth,
-    sourceHeight,
-    drawX,
-    drawY,
-    drawWidth,
-    drawHeight,
-  )
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    const error = gl.getShaderInfoLog(shader)
+
+    gl.deleteShader(shader)
+    throw new Error(error || 'Shader compilation failed')
+  }
+
+  return shader
+}
+
+function createProgram(gl, vertexShader, fragmentShader) {
+  const program = gl.createProgram()
+
+  if (!program) {
+    return null
+  }
+
+  gl.attachShader(program, vertexShader)
+  gl.attachShader(program, fragmentShader)
+  gl.linkProgram(program)
+
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    const error = gl.getProgramInfoLog(program)
+
+    gl.deleteProgram(program)
+    throw new Error(error || 'Program link failed')
+  }
+
+  return program
 }
 
 export default function FluidBackdrop({ backgroundSrc }) {
@@ -73,299 +173,191 @@ export default function FluidBackdrop({ backgroundSrc }) {
       return undefined
     }
 
-    const context = canvas.getContext('2d')
-
-    if (!context) {
-      return undefined
-    }
-
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const lowPowerDevice =
       (typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 4) ||
       (typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 4)
-    const useLightMode = prefersReducedMotion || lowPowerDevice
+    const dprCap = prefersReducedMotion || lowPowerDevice ? 1 : 1.35
+    const targetFrameMs = prefersReducedMotion || lowPowerDevice ? 1000 / 30 : 1000 / 60
+    const intensity = prefersReducedMotion || lowPowerDevice ? 0.45 : 1
 
-    const particles = []
-    const ripples = []
-    const trails = []
-    const pointer = {
-      x: window.innerWidth * 0.5,
-      y: window.innerHeight * 0.55,
-      prevX: window.innerWidth * 0.5,
-      prevY: window.innerHeight * 0.55,
-      time: performance.now(),
-      down: false,
-      inside: true,
+    let gl = null
+
+    try {
+      gl =
+        canvas.getContext('webgl', {
+          alpha: true,
+          antialias: false,
+          depth: false,
+          stencil: false,
+          powerPreference: lowPowerDevice ? 'low-power' : 'high-performance',
+          premultipliedAlpha: false,
+        }) ||
+        canvas.getContext('experimental-webgl')
+    } catch {
+      gl = null
     }
 
-    let rafId = 0
-    let lastEmission = 0
-    let dpr = 1
-    let disposed = false
-    let backgroundImage = null
+    if (!gl) {
+      canvas.style.backgroundImage = `url(${backgroundSrc})`
+      canvas.style.backgroundPosition = 'center'
+      canvas.style.backgroundRepeat = 'no-repeat'
+      canvas.style.backgroundSize = 'cover'
+      return undefined
+    }
+
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource)
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource)
+
+    if (!vertexShader || !fragmentShader) {
+      return undefined
+    }
+
+    const program = createProgram(gl, vertexShader, fragmentShader)
+
+    if (!program) {
+      return undefined
+    }
+
+    const positionBuffer = gl.createBuffer()
+    const texture = gl.createTexture()
+
+    if (!positionBuffer || !texture) {
+      return undefined
+    }
+
+    const positionLocation = gl.getAttribLocation(program, 'a_position')
+    const timeLocation = gl.getUniformLocation(program, 'u_time')
+    const resolutionLocation = gl.getUniformLocation(program, 'u_resolution')
+    const pointerLocation = gl.getUniformLocation(program, 'u_pointer')
+    const textureLocation = gl.getUniformLocation(program, 'u_texture')
+    const intensityLocation = gl.getUniformLocation(program, 'u_intensity')
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
+      gl.STATIC_DRAW,
+    )
+
+    gl.bindTexture(gl.TEXTURE_2D, texture)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      gl.RGBA,
+      1,
+      1,
+      0,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      new Uint8Array([7, 9, 18, 255]),
+    )
+
     const image = new Image()
+    const pointer = { currentX: 0.5, currentY: 0.5, targetX: 0.5, targetY: 0.5 }
+
+    let imageLoaded = false
+    let rafId = 0
+    let lastFrameTime = 0
 
     image.decoding = 'async'
     image.src = backgroundSrc
     image.addEventListener('load', () => {
-      if (!disposed) {
-        backgroundImage = image
-      }
+      gl.bindTexture(gl.TEXTURE_2D, texture)
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image)
+      imageLoaded = true
     })
 
     function resizeCanvas() {
-      dpr = useLightMode ? 1 : Math.min(window.devicePixelRatio || 1, 1.5)
+      const dpr = Math.min(window.devicePixelRatio || 1, dprCap)
+
       canvas.width = Math.round(window.innerWidth * dpr)
       canvas.height = Math.round(window.innerHeight * dpr)
       canvas.style.width = `${window.innerWidth}px`
       canvas.style.height = `${window.innerHeight}px`
-      context.setTransform(dpr, 0, 0, dpr, 0, 0)
-    }
-
-    function addTrail(x1, y1, x2, y2, speed, pointerDown) {
-      trails.push({
-        x1,
-        y1,
-        x2,
-        y2,
-        lineWidth: (pointerDown ? 26 : 18) + speed * 12,
-        life: pointerDown ? 0.16 : 0.12,
-        fade: pointerDown ? 0.007 : 0.0085,
-        color: randomFrom(trailPalette),
-      })
-    }
-
-    function pushEffects(x, y, speed, pointerDown) {
-      ripples.push({
-        x,
-        y,
-        radius: pointerDown ? 16 : 10,
-        growth: pointerDown ? 3 : 2.1,
-        life: pointerDown ? 0.34 : 0.22,
-        fade: pointerDown ? 0.013 : 0.017,
-        color: randomFrom(ripplePalette),
-        lineWidth: pointerDown ? 2.6 : 1.7,
-      })
-
-      if (useLightMode) {
-        return
-      }
-
-      const totalParticles = pointerDown ? 5 : 3
-
-      for (let index = 0; index < totalParticles; index += 1) {
-        const angle = Math.random() * Math.PI * 2
-        const burst = 0.3 + Math.random() * 0.8 + speed * 0.65
-
-        particles.push({
-          x,
-          y,
-          vx: Math.cos(angle) * burst * 0.68,
-          vy: Math.sin(angle) * burst * 0.35 - (0.28 + Math.random() * 0.75),
-          radius: 10 + Math.random() * 14 + speed * 5,
-          life: 1,
-          fade: 0.016 + Math.random() * 0.015,
-          drift: 0.004 + Math.random() * 0.01,
-          color: randomFrom(particlePalette),
-        })
-      }
-
-      addTrail(pointer.prevX, pointer.prevY, x, y, speed, pointerDown)
+      gl.viewport(0, 0, canvas.width, canvas.height)
     }
 
     function handlePointerMove(event) {
-      const now = performance.now()
-      const dx = event.clientX - pointer.x
-      const dy = event.clientY - pointer.y
-      const dt = Math.max(now - pointer.time, 16)
-      const speed = Math.min(Math.hypot(dx, dy) / dt, 2.2)
-
-      pointer.prevX = pointer.x
-      pointer.prevY = pointer.y
-      pointer.x = event.clientX
-      pointer.y = event.clientY
-      pointer.time = now
-      pointer.inside = true
-
-      const emissionDelay = useLightMode ? 70 : 24
-
-      if (now - lastEmission > emissionDelay) {
-        pushEffects(pointer.x, pointer.y, speed, event.buttons > 0 || pointer.down)
-        lastEmission = now
-      }
-    }
-
-    function handlePointerDown(event) {
-      pointer.down = true
-      pointer.prevX = event.clientX
-      pointer.prevY = event.clientY
-      pointer.x = event.clientX
-      pointer.y = event.clientY
-      pushEffects(pointer.x, pointer.y, 1.2, true)
-    }
-
-    function handlePointerUp() {
-      pointer.down = false
+      pointer.targetX = event.clientX / window.innerWidth
+      pointer.targetY = 1 - event.clientY / window.innerHeight
     }
 
     function handlePointerLeave() {
-      pointer.inside = false
-      pointer.down = false
-    }
-
-    function drawGlow(x, y, radius, alpha, color) {
-      const gradient = context.createRadialGradient(x, y, 0, x, y, radius)
-
-      gradient.addColorStop(0, color.core.replace(/[\d.]+\)$/, `${alpha})`))
-      gradient.addColorStop(1, color.edge)
-
-      context.fillStyle = gradient
-      context.beginPath()
-      context.arc(x, y, radius, 0, Math.PI * 2)
-      context.fill()
-    }
-
-    function drawTrail(trail) {
-      context.save()
-      context.strokeStyle = trail.color.replace(/[\d.]+\)$/, `${trail.life})`)
-      context.lineWidth = trail.lineWidth
-      context.lineCap = 'round'
-      context.lineJoin = 'round'
-      context.shadowBlur = 24
-      context.shadowColor = trail.color.replace(/[\d.]+\)$/, `${Math.max(trail.life * 0.9, 0)})`)
-      context.beginPath()
-      context.moveTo(trail.x1, trail.y1)
-      context.quadraticCurveTo(
-        (trail.x1 + trail.x2) * 0.5,
-        Math.min(trail.y1, trail.y2) - trail.lineWidth * 0.24,
-        trail.x2,
-        trail.y2,
-      )
-      context.stroke()
-      context.restore()
+      pointer.targetX = 0.5
+      pointer.targetY = 0.5
     }
 
     function render(now) {
-      const canvasWidth = window.innerWidth
-      const canvasHeight = window.innerHeight
-      const driftX = useLightMode ? 0 : Math.sin(now * 0.00011) * 22
-      const driftY = useLightMode ? 0 : Math.cos(now * 0.00008) * 16
-
-      context.clearRect(0, 0, window.innerWidth, window.innerHeight)
-
-      if (backgroundImage) {
-        drawCoverImage(context, backgroundImage, canvasWidth, canvasHeight, driftX, driftY, 1.04)
-      } else {
-        const fallback = context.createLinearGradient(0, 0, 0, canvasHeight)
-        fallback.addColorStop(0, '#081327')
-        fallback.addColorStop(0.55, '#122347')
-        fallback.addColorStop(1, '#14091f')
-        context.fillStyle = fallback
-        context.fillRect(0, 0, canvasWidth, canvasHeight)
+      if (now - lastFrameTime < targetFrameMs) {
+        rafId = window.requestAnimationFrame(render)
+        return
       }
 
-      const skyGlow = context.createRadialGradient(
-        canvasWidth * 0.52,
-        canvasHeight * 0.28,
-        0,
-        canvasWidth * 0.52,
-        canvasHeight * 0.28,
-        canvasWidth * 0.48,
-      )
-      skyGlow.addColorStop(0, useLightMode ? 'rgba(116, 196, 255, 0.14)' : 'rgba(116, 196, 255, 0.18)')
-      skyGlow.addColorStop(0.4, 'rgba(78, 93, 255, 0.06)')
-      skyGlow.addColorStop(1, 'rgba(5, 10, 20, 0)')
-      context.fillStyle = skyGlow
-      context.fillRect(0, 0, canvasWidth, canvasHeight)
+      lastFrameTime = now
 
-      const edgeShade = context.createLinearGradient(0, 0, 0, canvasHeight)
-      edgeShade.addColorStop(0, 'rgba(1, 6, 16, 0.1)')
-      edgeShade.addColorStop(0.58, 'rgba(1, 6, 18, 0.22)')
-      edgeShade.addColorStop(1, 'rgba(1, 4, 10, 0.54)')
-      context.fillStyle = edgeShade
-      context.fillRect(0, 0, canvasWidth, canvasHeight)
+      pointer.currentX += (pointer.targetX - pointer.currentX) * 0.06
+      pointer.currentY += (pointer.targetY - pointer.currentY) * 0.06
 
-      for (let index = ripples.length - 1; index >= 0; index -= 1) {
-        const ripple = ripples[index]
+      gl.useProgram(program)
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+      gl.enableVertexAttribArray(positionLocation)
+      gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0)
 
-        ripple.radius += ripple.growth
-        ripple.life -= ripple.fade
+      gl.activeTexture(gl.TEXTURE0)
+      gl.bindTexture(gl.TEXTURE_2D, texture)
 
-        if (ripple.life <= 0) {
-          ripples.splice(index, 1)
-          continue
-        }
-
-        context.save()
-        context.beginPath()
-        context.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2)
-        context.strokeStyle = ripple.color.replace(/[\d.]+\)$/, `${ripple.life})`)
-        context.lineWidth = ripple.lineWidth
-        context.shadowBlur = useLightMode ? 16 : 22
-        context.shadowColor = ripple.color.replace(/[\d.]+\)$/, `${Math.max(ripple.life * 0.9, 0)})`)
-        context.stroke()
-        context.restore()
+      if (textureLocation) {
+        gl.uniform1i(textureLocation, 0)
       }
 
-      context.save()
-      context.globalCompositeOperation = 'screen'
-
-      for (let index = trails.length - 1; index >= 0; index -= 1) {
-        const trail = trails[index]
-
-        trail.life -= trail.fade
-
-        if (trail.life <= 0) {
-          trails.splice(index, 1)
-          continue
-        }
-
-        drawTrail(trail)
+      if (timeLocation) {
+        gl.uniform1f(timeLocation, now * 0.001)
       }
 
-      for (let index = particles.length - 1; index >= 0; index -= 1) {
-        const particle = particles[index]
-
-        particle.x += particle.vx
-        particle.y += particle.vy
-        particle.vy -= particle.drift
-        particle.vx *= 0.992
-        particle.life -= particle.fade
-
-        if (particle.life <= 0) {
-          particles.splice(index, 1)
-          continue
-        }
-
-        drawGlow(particle.x, particle.y, particle.radius, particle.life * 0.34, particle.color)
+      if (resolutionLocation) {
+        gl.uniform2f(resolutionLocation, canvas.width, canvas.height)
       }
 
-      context.restore()
+      if (pointerLocation) {
+        gl.uniform2f(pointerLocation, pointer.currentX, pointer.currentY)
+      }
 
-      if (!useLightMode && pointer.inside && Math.random() > 0.72) {
-        pushEffects(pointer.x, pointer.y, 0.18, false)
+      if (intensityLocation) {
+        gl.uniform1f(intensityLocation, intensity)
+      }
+
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+
+      if (!imageLoaded) {
+        gl.flush()
       }
 
       rafId = window.requestAnimationFrame(render)
     }
 
     resizeCanvas()
-    render(performance.now())
+    rafId = window.requestAnimationFrame(render)
 
     window.addEventListener('resize', resizeCanvas)
-    window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerdown', handlePointerDown)
-    window.addEventListener('pointerup', handlePointerUp)
+    window.addEventListener('pointermove', handlePointerMove, { passive: true })
     window.addEventListener('pointerleave', handlePointerLeave)
 
     return () => {
-      disposed = true
       window.cancelAnimationFrame(rafId)
       window.removeEventListener('resize', resizeCanvas)
       window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('pointerdown', handlePointerDown)
-      window.removeEventListener('pointerup', handlePointerUp)
       window.removeEventListener('pointerleave', handlePointerLeave)
+
+      gl.deleteBuffer(positionBuffer)
+      gl.deleteTexture(texture)
+      gl.deleteProgram(program)
+      gl.deleteShader(vertexShader)
+      gl.deleteShader(fragmentShader)
     }
   }, [backgroundSrc])
 
