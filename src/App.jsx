@@ -274,16 +274,7 @@ function App() {
       <div className="night-gradient" aria-hidden="true"></div>
 
       <section className="scene-backdrop" aria-hidden="true">
-        <motion.img
-          className="pandora-backdrop"
-          src={backgroundPandora}
-          alt=""
-          draggable={false}
-          initial={{ opacity: 0, scale: 1.08, y: 28 }}
-          animate={{ opacity: 1, scale: 1.02, y: 0 }}
-          transition={{ duration: 1.6, ease: [0.2, 0.85, 0.25, 1] }}
-        />
-
+        <FluidBackdrop backgroundSrc={backgroundPandora} />
         <div className="backdrop-veil"></div>
 
         <div className="starfield">
@@ -301,8 +292,6 @@ function App() {
             ></span>
           ))}
         </div>
-
-        <FluidBackdrop />
 
         <div className="vine-layer">
           {vines.map((vine) => (

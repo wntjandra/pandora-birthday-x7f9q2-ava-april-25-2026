@@ -40,16 +40,6 @@
   --bush-right-width: min(42vw, 620px);
 }
 
-.pandora-backdrop {
-  position: absolute;
-  inset: -2%;
-  width: 104%;
-  height: 104%;
-  object-fit: cover;
-  filter: saturate(1.08) brightness(0.76) contrast(1.02);
-  animation: backdropFloat 18s ease-in-out infinite alternate;
-}
-
 .backdrop-veil {
   position: absolute;
   inset: 0;
@@ -66,6 +56,18 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+}
+
+.backdrop-veil {
+  z-index: 2;
+}
+
+.starfield {
+  z-index: 3;
+}
+
+.vine-layer {
+  z-index: 4;
 }
 
 .scene-star {
@@ -88,10 +90,9 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 2;
-  opacity: 0.92;
+  z-index: 1;
+  opacity: 1;
   pointer-events: none;
-  mix-blend-mode: screen;
 }
 
 .scene-vine {
@@ -659,16 +660,6 @@
   }
 }
 
-@keyframes backdropFloat {
-  0% {
-    transform: scale(1.02) translate3d(0, 0, 0);
-  }
-
-  100% {
-    transform: scale(1.06) translate3d(0, -12px, 0);
-  }
-}
-
 @keyframes bushFloat {
   0%,
   100% {
@@ -739,11 +730,6 @@
   .scene-backdrop {
     --bush-left-width: min(50vw, 620px);
     --bush-right-width: min(46vw, 560px);
-  }
-
-  .pandora-backdrop {
-    width: 110%;
-    inset: -2% -5%;
   }
 
   .bush-cluster-left {
