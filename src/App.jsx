@@ -262,12 +262,12 @@ function App() {
       return
     }
 
-    shell.style.setProperty('--book-tilt-x', `${(-normalizedY * 8).toFixed(2)}deg`)
-    shell.style.setProperty('--book-tilt-y', `${(normalizedX * 10).toFixed(2)}deg`)
-    shell.style.setProperty('--book-shift-x-sm', `${(normalizedX * 8).toFixed(2)}px`)
-    shell.style.setProperty('--book-shift-y-sm', `${(normalizedY * 6).toFixed(2)}px`)
-    shell.style.setProperty('--book-shift-x-md', `${(normalizedX * 14).toFixed(2)}px`)
-    shell.style.setProperty('--book-shift-y-md', `${(normalizedY * 10).toFixed(2)}px`)
+    shell.style.setProperty('--book-tilt-x', `${(-normalizedY * 4.2).toFixed(2)}deg`)
+    shell.style.setProperty('--book-tilt-y', `${(normalizedX * 5.4).toFixed(2)}deg`)
+    shell.style.setProperty('--book-shift-x-sm', `${(normalizedX * 4.5).toFixed(2)}px`)
+    shell.style.setProperty('--book-shift-y-sm', `${(normalizedY * 3.2).toFixed(2)}px`)
+    shell.style.setProperty('--book-shift-x-md', `${(normalizedX * 8).toFixed(2)}px`)
+    shell.style.setProperty('--book-shift-y-md', `${(normalizedY * 5.4).toFixed(2)}px`)
   }
 
   function resetBookPose() {
@@ -452,12 +452,12 @@ function App() {
             <Tilt
               className="storybook-tilt"
               perspective={1800}
-              tiltMaxAngleX={10}
-              tiltMaxAngleY={14}
-              scale={1.01}
-              transitionSpeed={220}
+              tiltMaxAngleX={5}
+              tiltMaxAngleY={7}
+              scale={1.004}
+              transitionSpeed={320}
               glareEnable={true}
-              glareMaxOpacity={0.08}
+              glareMaxOpacity={0.05}
               glareColor="#b8f7ff"
               glareBorderRadius="26px"
               onMove={({ tiltAngleXPercentage = 0, tiltAngleYPercentage = 0 }) => {
