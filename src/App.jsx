@@ -6,10 +6,22 @@ import backgroundPandora from './assets/BackgroundPandora.png'
 import bushes1 from './assets/Bushes1.png'
 import bushes2 from './assets/Bushes2.png'
 import pageFlipNoise from './assets/pageFlipNoise.mp3'
+import childOfTwoWorlds from './music/03. Child of Two Worlds.mp3'
+import theWildwoods from './music/04. The Wildwoods.mp3'
+import songOfTheSarentu from './music/12. Song of the Sarentu.mp3'
+import theHollows from './music/13. The Hollows.mp3'
+import beneathTheKinglorNest from './music/14. Beneath the Kinglor Nest.mp3'
 import FluidBackdrop from './components/FluidBackdrop.jsx'
 import './App.css'
 
 const MotionMain = motion.main
+const soundtrack = [
+  childOfTwoWorlds,
+  theWildwoods,
+  songOfTheSarentu,
+  theHollows,
+  beneathTheKinglorNest,
+]
 
 const pageSpreads = [
   {
@@ -394,7 +406,9 @@ function App() {
   const [bookState, setBookState] = useState('read')
   const storybookShellRef = useRef(null)
   const flipBookRef = useRef(null)
-  const audioRef = useRef(null)
+  const flipAudioRef = useRef(null)
+  const musicAudioRef = useRef(null)
+  const soundtrackIndexRef = useRef(0)
 
   useEffect(() => {
     const showBookTimer = window.setTimeout(() => setBookVisible(true), 1050)
@@ -409,11 +423,73 @@ function App() {
 
     audio.preload = 'auto'
     audio.volume = 0.45
-    audioRef.current = audio
+    flipAudioRef.current = audio
 
     return () => {
       audio.pause()
-      audioRef.current = null
+      flipAudioRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    const music = new Audio(soundtrack[0])
+
+    music.preload = 'auto'
+    music.volume = 0.5
+    musicAudioRef.current = music
+    soundtrackIndexRef.current = 0
+
+    function stopInteractionListeners() {
+      window.removeEventListener('pointerdown', attemptMusicPlayback)
+      window.removeEventListener('keydown', attemptMusicPlayback)
+      window.removeEventListener('touchstart', attemptMusicPlayback)
+    }
+
+    function playCurrentTrack() {
+      const currentMusic = musicAudioRef.current
+
+      if (!currentMusic) {
+        return
+      }
+
+      currentMusic.volume = 0.5
+
+      const playPromise = currentMusic.play()
+
+      if (playPromise?.then) {
+        playPromise.then(stopInteractionListeners).catch(() => {})
+      }
+    }
+
+    function handleTrackEnded() {
+      const currentMusic = musicAudioRef.current
+
+      if (!currentMusic) {
+        return
+      }
+
+      soundtrackIndexRef.current = (soundtrackIndexRef.current + 1) % soundtrack.length
+      currentMusic.src = soundtrack[soundtrackIndexRef.current]
+      currentMusic.currentTime = 0
+      playCurrentTrack()
+    }
+
+    function attemptMusicPlayback() {
+      playCurrentTrack()
+    }
+
+    music.addEventListener('ended', handleTrackEnded)
+    music.load()
+    attemptMusicPlayback()
+    window.addEventListener('pointerdown', attemptMusicPlayback)
+    window.addEventListener('keydown', attemptMusicPlayback)
+    window.addEventListener('touchstart', attemptMusicPlayback)
+
+    return () => {
+      stopInteractionListeners()
+      music.removeEventListener('ended', handleTrackEnded)
+      music.pause()
+      musicAudioRef.current = null
     }
   }, [])
 
@@ -437,7 +513,7 @@ function App() {
   }
 
   function playFlipNoise() {
-    const audio = audioRef.current
+    const audio = flipAudioRef.current
 
     if (!audio) {
       return
