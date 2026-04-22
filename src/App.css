@@ -397,18 +397,19 @@
 }
 
 .cover-kicker-back {
-  margin-top: 54px;
+  margin-top: 26px;
 }
 
 .back-cover-title {
   position: relative;
   z-index: 1;
   width: min(380px, 100%);
-  margin-top: 132px;
+  margin-top: 92px;
   text-align: center;
   font-family: var(--display);
   font-size: clamp(3rem, 6.6vw, 4.4rem);
   line-height: 0.98;
+  letter-spacing: 0.014em;
   color: #f7f1e3;
   text-shadow:
     0 0 18px rgba(82, 255, 233, 0.12),
@@ -439,10 +440,11 @@
 }
 
 .cover-title-ava {
-  color: rgba(255, 229, 182, 0.96);
+  color: #ffd46e;
   text-shadow:
-    0 0 18px rgba(255, 207, 122, 0.18),
-    0 0 30px rgba(82, 255, 233, 0.08);
+    0 0 18px rgba(255, 214, 120, 0.28),
+    0 0 34px rgba(255, 180, 69, 0.16),
+    0 0 28px rgba(82, 255, 233, 0.05);
 }
 
 .cover-title-rest {
@@ -940,7 +942,7 @@
   }
 
   .back-cover-title {
-    margin-top: 112px;
+    margin-top: 76px;
     font-size: clamp(2.5rem, 5.4vw, 3.8rem);
   }
 }
@@ -1020,8 +1022,13 @@
 
   .back-cover-title {
     width: min(300px, 100%);
-    margin-top: 82px;
+    margin-top: 54px;
     font-size: clamp(2rem, 8.6vw, 2.9rem);
+    letter-spacing: 0.01em;
+  }
+
+  .cover-kicker-back {
+    margin-top: 14px;
   }
 
   .cover-name-back {
