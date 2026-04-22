@@ -31,7 +31,7 @@ const pageSpreads = [
       blocks: [
         "Ava didn't remember falling asleep.",
         "But when she opened her eyes, the world was already different. It wasn't bright or blinding. It was soft, alive, like the world itself was glowing from within.",
-        'She was no longer in her room. She was somewhere else. Somewhere mysterious, enchanting, and beautiful...',
+        'She was no longer in her room. She was somewhere else. Somewhere mysterious, enchanting, and breathtaking...',
       ],
       footer: 'A dream opened in the glow',
     },
@@ -74,9 +74,9 @@ const pageSpreads = [
       title: 'Familiar Faces',
       className: 'compact',
       blocks: [
-        'Two girls stood nearby, both carrying the same faint radiance as the trees around them.',
-        '"You look like you just woke up," one said. Ava laughed softly. "I think I did."',
-        '"We did too, not long ago," the other told her. They felt instantly familiar, comforting in the way people do when they already understand you. "Come. You should see more."',
+        'Two figures stepped softly from between the glowing trees, their presence woven into the same quiet radiance that breathed through the forest.',
+        'They felt familiar. Like they belonged to this place, like something in her knew them.',
+        '"You\'ve arrived," one said gently, as though the moment had been long expected. "We\'ve been waiting," the other added, her voice calm and certain, like the world itself speaking through her. They turned, already knowing she would follow. "Come. There is more for you to see."',
       ],
       footer: 'Some friendships arrive gently',
     },
@@ -97,8 +97,8 @@ const pageSpreads = [
       title: 'Sky Creatures',
       className: 'compact',
       blocks: [
-        'One of the girls lifted her hand toward the heavens, where rivers of blue, violet, and rose light drifted above the ridge like living silk.',
-        '"The sky never keeps the same dream for long," she said softly.',
+        'One of the them lifted their hand toward the heavens, where rivers of blue, violet, and rose light drifted above the ridge like living silk.',
+        '"The sky never keeps the same dream for long," they said softly.',
         'Ava watched the colors move across the mist and the endless forest below until it felt less like weather and more like the whole world was breathing above her.',
       ],
       footer: 'Wonder kept moving',
@@ -133,7 +133,7 @@ const pageSpreads = [
       className: 'compact',
       blocks: [
         'At last the creature lowered itself. Ava touched the long strand of hair that felt different, and she understood.',
-        'Through tsaheylu, beings in this world could share thought, feeling, and sense directly.',
+        'Through Tsaheylu, beings in this world could share thought, feeling, and sense directly.',
         'The instant they connected, she felt rushing wind, endless sky, the ache of flying alone for so long, and then the deep relief of being found. The creature gave a soft, resonant call.',
       ],
       footer: 'A bond made in trust',
@@ -155,7 +155,7 @@ const pageSpreads = [
       title: 'Connection',
       className: 'compact',
       blocks: [
-        'Her friends stayed behind while Ava stepped closer, breathing more slowly until her rhythm matched the tree.',
+        'The others stayed behind while Ava stepped closer, breathing more slowly until her rhythm matched the tree.',
         'This was the place where all life connected to Eywa, the living consciousness woven through every creature, plant, and stream.',
         'She reached back and gently connected.',
       ],
@@ -182,7 +182,7 @@ const pageSpreads = [
         {
           type: 'verse',
           text:
-            'You walked your path where shadows lay,\nAnd chose to rise another day.\n\nThrough quiet strength and unseen fight,\nYou learned to carry your own light.\n\nAnd now you stand where worlds can see,\nThe beauty grown so silently.\n\nNot given, no -- this glow you wear,\nWas built from all you chose to bear.\n\nSo rest, and know, without a doubt --\nThe light you seek has long been yours throughout.',
+            'You walked your path where shadows lay,\nAnd chose to rise another day.\n\nThrough quiet strength and unseen fight,\nYou learned to carry your own light.\n\nAnd now you stand where worlds can see,\nThe beauty grown so silently.\n\nNot given, no. This glow you wear,\nWas built from all you chose to bear.\n\nSo rest, and know, without a doubt\nThe light you seek was always reaching out.',
         },
       ],
       footer: 'A gift carried home',
@@ -191,23 +191,24 @@ const pageSpreads = [
   {
     left: {
       eyebrow: 'The Return',
-      title: 'The Perfect Day Began to Dim',
+      title: 'The Light Began to Fade',
       blocks: [
-        'The forest softened into twilight. Ava turned to her friends. "Will I see you again?"',
-        'One smiled. "Maybe."',
-        '"Or maybe you already will," the other said, "in ways you don\'t expect." Ava laughed, and somehow that made perfect sense.',
+        'The forest softened into twilight, its glow dimming into something quieter, more distant.',
+        'Ava turned. The two figures stood a little farther now, already becoming part of the light they came from.',
+        'They met her gaze and smiled—soft, knowing, like nothing needed to be said.',
+        'And then, gently, they were gone.',
       ],
-      footer: 'Goodbyes were never quite final',
+      footer: 'Not everything that fades is gone',
     },
     right: {
       eyebrow: 'Awakening',
       title: 'She Opened Her Eyes at Home',
       blocks: [
-        'Her room was still and quiet, but something had changed.',
-        'Ava sat up slowly and looked at her hands.',
-        'Then she smiled.',
+        'Her room was still and quiet, exactly as she had left it.',
+        'Ava sat up slowly, the world unchanged—but not the same.',
+        'She looked at her hands for a moment, then smiled.',
       ],
-      footer: 'The dream came back with her',
+      footer: 'She brought the light with her',
     },
   },
   {
@@ -225,7 +226,7 @@ const pageSpreads = [
       eyebrow: 'Final Line',
       title: 'Because Somewhere Deep, She Knew',
       className: 'closing',
-      blocks: [{ type: 'quote', text: 'The Luminous World Was Still Alive.' }],
+      blocks: [{ type: 'quote', text: 'The Luminous World Was Still Alive' }],
       footer: 'New world, new dream',
     },
   },
