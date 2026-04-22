@@ -532,7 +532,6 @@ function App() {
   }
 
   function handleBookFlip(event) {
-    playFlipNoise()
     setCurrentPage(event.data)
   }
 
@@ -547,6 +546,8 @@ function App() {
     if (!pageFlip || bookState === 'flipping') {
       return
     }
+
+    playFlipNoise()
 
     if (direction === 'forward') {
       pageFlip.flipNext('bottom')
