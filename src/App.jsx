@@ -14,58 +14,181 @@ const MotionMain = motion.main
 const pageSpreads = [
   {
     left: {
-      eyebrow: 'Moonrise',
-      title: 'The forest woke up first.',
-      body: 'Starlight slipped through the mist, the ferns began to glow, and every bright little thing in the valley leaned closer like it already knew this night belonged to you.',
-      footer: 'A birthday opening scene for Ava',
+      eyebrow: 'Prologue',
+      title: 'She remembered the light.',
+      blocks: [
+        "Ava didn't remember falling asleep.",
+        "But she remembered the light. It wasn't bright or blinding. It was soft, alive, like the world itself was glowing from within.",
+        'When she opened her eyes, she was no longer in her room. She was somewhere else.',
+      ],
+      footer: 'A dream opened in the glow',
     },
     right: {
-      eyebrow: 'Page One',
-      title: 'Happy Birthday, Ava.',
-      body: 'If a whole world could gather itself into a feeling, it would look something like this: luminous, cinematic, and quietly full of wonder the second you arrive.',
-      footer: 'Click the right page to move forward',
+      eyebrow: 'The Awakening',
+      title: 'The forest answered her first step.',
+      blocks: [
+        'She lay on a forest floor that shimmered beneath her, each breath sending blue and violet ripples through the moss.',
+        'Particles drifted like slow stars. Towering trees rose above her, braided with glowing vines that swayed as if they were breathing.',
+        'Ava stood barefoot and stepped forward. The ground lit up beneath her, and soft waves of color spread outward. She smiled.',
+      ],
+      footer: 'The world noticed her arrival',
     },
   },
   {
     left: {
-      eyebrow: 'Bioluminescent Grove',
-      title: 'Everything is glowing on purpose.',
-      body: 'The floating spores, the rivers of blue light, and the violet flare around every fern make the whole place feel alive enough to celebrate with you.',
-      footer: 'Click the left page to go back',
+      eyebrow: 'Living World',
+      title: 'Everything felt calm. Beautiful. Alive.',
+      blocks: [
+        'Massive mushroom forms rose in the distance, their glowing caps casting halos through the mist in pinks, purples, and blues.',
+        'A nearby stream carried light inside it. When Ava dipped her hand into the water, the glow gathered around her fingers as if it recognized her.',
+        'The air hummed, not like a sound, but like a connection.',
+      ],
+      footer: 'The world glowed back',
     },
     right: {
-      eyebrow: 'Birthday Wish',
-      title: 'I hope this year feels cinematic.',
-      body: 'Not just busy, not just full, but vivid. More adventures worth remembering, more laughter that arrives fast, and more moments that make you stop and think, yes, this is exactly my life.',
-      footer: 'Right page keeps the story moving',
+      eyebrow: 'The Others',
+      title: '"You are new."',
+      className: 'compact',
+      blocks: [
+        'Two girls stood nearby, both carrying the same faint radiance as the trees around them.',
+        '"You look like you just woke up," one said. Ava laughed softly. "I think I did."',
+        '"We did too, not long ago," the other told her. They felt instantly familiar, comforting in the way people do when they already understand you. "Come. You should see more."',
+      ],
+      footer: 'Some friendships arrive gently',
     },
   },
   {
     left: {
-      eyebrow: 'Hidden Clearing',
-      title: 'A little storybook promise.',
-      body: 'Whenever things feel ordinary, I hope something unexpected glows at the edge of the frame and reminds you that wonder is still around, waiting for you to notice it again.',
-      footer: 'The best gifts linger after the first reveal',
+      eyebrow: 'A World of Wonder',
+      title: 'They followed the glow together.',
+      blocks: [
+        'They walked beneath enormous canopies where strands of light brushed their shoulders like silk.',
+        'They climbed roots that pulsed under their touch and crossed wide clearings where the sky shimmered with drifting color instead of stars.',
+        'At a high ridge, Ava looked out over an endless forest flowing in blue, violet, and pink like a living ocean.',
+      ],
+      footer: 'The forest kept unfolding',
     },
     right: {
-      eyebrow: 'For Ava',
-      title: 'You make bright things brighter.',
-      body: 'So this page, this night forest, and this impossible little moonlit world are all here to do one simple job: celebrate you with as much atmosphere as possible.',
-      footer: 'Turn either way from here',
+      eyebrow: 'The Ridge',
+      title: '"It is always changing."',
+      blocks: [
+        '"It\'s always changing," one of the girls said.',
+        'Ava watched the colors shift slowly, as if the whole world was dreaming.',
+        "She didn't want to leave.",
+      ],
+      footer: 'Wonder kept moving',
     },
   },
   {
     left: {
-      eyebrow: 'Last Spread',
-      title: 'Keep the glow with you.',
-      body: 'May this next chapter be full of beautiful detours, unforgettable views, and the kind of joy that shows up suddenly and stays long enough to change the whole color of the evening.',
-      footer: 'The jungle does not hurry, but it still shines',
+      eyebrow: 'The Bond',
+      title: 'Something in the sky called to her.',
+      blocks: [
+        'A distant cry echoed overhead. A creature soared above them, its wings long and elegant, trailing strokes of light through the air.',
+        'It circled once, then descended.',
+        'Ava felt it before it landed: not fear, not surprise, but a quiet pull.',
+      ],
+      footer: 'The sky answered back',
     },
     right: {
-      eyebrow: 'Encore',
-      title: 'And if you want, the whole night can begin again.',
-      body: 'One more right-page turn loops back to the beginning, and one left-page turn lets you revisit the spread just before this one.',
-      footer: 'The book now flips both directions',
+      eyebrow: 'Tsaheylu',
+      title: 'It chose her, and she chose it.',
+      className: 'compact',
+      blocks: [
+        'The creature lowered itself and watched her. Ava touched the long strand of hair that felt different, and she understood.',
+        'Through tsaheylu, beings in this world could share thought, feeling, and sense directly.',
+        'The instant they connected, she felt rushing wind, endless sky, the loneliness of flying alone for so long, and then relief. The creature gave a soft, resonant call.',
+      ],
+      footer: 'A bond made in trust',
+    },
+  },
+  {
+    left: {
+      eyebrow: 'Tree of Connection',
+      title: 'A deeper light was waiting.',
+      blocks: [
+        'As twilight deepened, Ava felt another pull, gentle and certain.',
+        'She followed glowing roots and drifting lights until she stood before a tree brighter than anything she had seen.',
+        'Its roots spread wide like a heartbeat beneath the world, and long luminous strands moved through the still air.',
+      ],
+      footer: 'Something sacred called her forward',
+    },
+    right: {
+      eyebrow: 'The Tree',
+      title: 'She walked to it alone.',
+      className: 'compact',
+      blocks: [
+        'Her friends stayed behind while Ava stepped closer, breathing more slowly until her rhythm matched the tree.',
+        'This was the place where all life connected to Eywa, the living consciousness woven through every creature, plant, and stream.',
+        'She reached back and gently connected.',
+      ],
+      footer: 'The whole world listened',
+    },
+  },
+  {
+    left: {
+      eyebrow: 'Eywa',
+      title: 'The world became everything at once.',
+      blocks: [
+        'She felt the roots beneath the ground, the trees stretching upward, the movement of creatures, the flow of water, and the quiet rhythm of life.',
+        'She was no longer only in the world. She was part of it.',
+        'And within that vast living presence, something understood her completely. In return, Eywa gave her something.',
+      ],
+      footer: 'The forest knew her fully',
+    },
+    right: {
+      eyebrow: "Eywa's Gift",
+      title: 'The light had always been hers.',
+      className: 'verse',
+      blocks: [
+        {
+          type: 'verse',
+          text:
+            'You walked your path where shadows lay,\nAnd chose to rise another day.\n\nThrough quiet strength and unseen fight,\nYou learned to carry your own light.\n\nAnd now you stand where worlds can see,\nThe beauty grown so silently.\n\nNot given, no -- this glow you wear,\nWas built from all you chose to bear.\n\nSo rest, and know, without a doubt --\nThe light you seek has long been yours throughout.',
+        },
+      ],
+      footer: 'A gift carried home',
+    },
+  },
+  {
+    left: {
+      eyebrow: 'The Return',
+      title: 'The perfect day began to dim.',
+      blocks: [
+        'The forest softened into twilight. Ava turned to her friends. "Will I see you again?"',
+        'One smiled. "Maybe."',
+        '"Or maybe you already will," the other said, "in ways you don\'t expect." Ava laughed, and somehow that made perfect sense.',
+      ],
+      footer: 'Goodbyes were never quite final',
+    },
+    right: {
+      eyebrow: 'Awakening',
+      title: 'She opened her eyes at home.',
+      blocks: [
+        'Her room was still and quiet, but something had changed.',
+        'Ava sat up slowly and looked at her hands.',
+        'Then she smiled.',
+      ],
+      footer: 'The dream came back with her',
+    },
+  },
+  {
+    left: {
+      eyebrow: 'Afterglow',
+      title: 'The light stayed.',
+      blocks: [
+        'Back in her room, the calm of that glowing forest remained.',
+        'What Eywa gave her was not something new. It was the certainty that her light had been there all along.',
+        'The luminous world had not vanished. It had become part of her.',
+      ],
+      footer: 'She woke up different',
+    },
+    right: {
+      eyebrow: 'Final Line',
+      title: 'Because somewhere deep within her...',
+      className: 'closing',
+      blocks: [{ type: 'quote', text: 'the luminous world was still alive.' }],
+      footer: 'Turn once more and the dream begins again',
     },
   },
 ]
@@ -146,13 +269,41 @@ const bookPages = [
   { key: 'cover-back', kind: 'cover-back' },
 ]
 
+function renderPageBlock(block, index) {
+  if (typeof block === 'string') {
+    return (
+      <p key={index} className="paper-body">
+        {block}
+      </p>
+    )
+  }
+
+  if (block.type === 'verse') {
+    return (
+      <p key={index} className="paper-verse">
+        {block.text}
+      </p>
+    )
+  }
+
+  if (block.type === 'quote') {
+    return (
+      <p key={index} className="paper-quote">
+        {block.text}
+      </p>
+    )
+  }
+
+  return null
+}
+
 const FlipBookPage = forwardRef(function FlipBookPage({ page }, ref) {
   if (page.kind === 'cover-front') {
     return (
       <article ref={ref} className="flip-book-page flip-book-page-cover" data-density="hard">
         <div className="cover-glow"></div>
         <div className="cover-rings"></div>
-        <h1 className="cover-title" aria-label="Avatar Into the Luminous World">
+        <h1 className="cover-title" aria-label="Ava-tar Into the Luminous World">
           <span className="cover-title-word">
             <span className="cover-title-ava">Ava</span>
             <span className="cover-title-rest">tar</span>
@@ -160,7 +311,7 @@ const FlipBookPage = forwardRef(function FlipBookPage({ page }, ref) {
           <span className="cover-title-subtitle">Into the Luminous World</span>
         </h1>
         <p className="cover-copy cover-copy-front">
-          Opened beneath a glowing canopy where the night never stops shimmering.
+          A dream opened beneath a glowing canopy, and the world answered Ava by name.
         </p>
       </article>
     )
@@ -176,24 +327,29 @@ const FlipBookPage = forwardRef(function FlipBookPage({ page }, ref) {
         <div className="cover-glow"></div>
         <div className="cover-rings"></div>
         <p className="cover-kicker cover-kicker-back">FOR AVA</p>
-        <h2 className="back-cover-title">Happy 20th Birthday.</h2>
+        <h2 className="back-cover-title">Happy 20th Birthday, Ava.</h2>
         <p className="cover-copy cover-copy-back">
-          The whole glowing night was built for you.
+          The whole luminous world is still glowing for you.
         </p>
       </article>
     )
   }
 
+  const storyPageClassName = [
+    'flip-book-page',
+    'flip-book-page-story',
+    `flip-book-page-story-${page.side}`,
+    page.className ? `flip-book-page-story-${page.className}` : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <article
-      ref={ref}
-      className={`flip-book-page flip-book-page-story flip-book-page-story-${page.side}`}
-      data-density="soft"
-    >
+    <article ref={ref} className={storyPageClassName} data-density="soft">
       <div className="flip-book-page-inner">
         <p className="paper-eyebrow">{page.eyebrow}</p>
         <h2>{page.title}</h2>
-        <p className="paper-body">{page.body}</p>
+        <div className="paper-content">{page.blocks.map(renderPageBlock)}</div>
         <div className="paper-footer-row">
           <p className="paper-footer">{page.footer}</p>
           <span className="paper-count">
@@ -492,6 +648,14 @@ function App() {
                 </div>
               </div>
             </Tilt>
+
+            <p className="book-hint">
+              {currentPage <= 0
+                ? 'Tap the right page to open the story.'
+                : currentPage >= bookPages.length - 1
+                  ? 'Tap the left page to revisit the story.'
+                  : 'Tap the right page to continue or the left page to go back.'}
+            </p>
           </motion.section>
         ) : null}
       </AnimatePresence>
