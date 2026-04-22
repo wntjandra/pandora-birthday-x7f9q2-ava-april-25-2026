@@ -30,20 +30,19 @@ const pageSpreads = [
       title: 'The Light',
       blocks: [
         "Ava didn't remember falling asleep.",
-        "But she remembered the light. It wasn't bright or blinding. It was soft, alive, like the world itself was glowing from within.",
-        'When she opened her eyes, she was no longer in her room. She was somewhere else.',
+        "But when she opened her eyes, the world was already different. It wasn't bright or blinding. It was soft, alive, like the world itself was glowing from within.",
+        'She was no longer in her room. She was somewhere else. Somewhere mysterious, enchanting, and beautiful...',
       ],
       footer: 'A dream opened in the glow',
     },
     right: {
       eyebrow: 'The Awakening',
       title: 'First Steps',
-      className: 'compact',
       blocks: [
         'She lay on a forest floor that shimmered beneath her, each breath sending blue and violet ripples through the moss.',
         'Particles drifted like slow stars. Towering trees rose above her, braided with glowing vines that swayed as if they were breathing.',
       ],
-      footer: null,
+      footer: 'First step into the unknown',
     },
   },
   {
@@ -113,7 +112,7 @@ const pageSpreads = [
         'It circled once. Then again, lower this time, hovering above them without landing and without leaving, as if it were deciding something only the sky understood.',
         'The air around them grew still.',
       ],
-      footer: null,
+      footer: 'Watchful presence remained overhead',
     },
   },
   {
@@ -176,7 +175,7 @@ const pageSpreads = [
       footer: 'The forest knew her fully',
     },
     right: {
-      eyebrow: "Eywa's Gift",
+      eyebrow: null,
       title: null,
       className: 'verse',
       blocks: [
@@ -227,7 +226,7 @@ const pageSpreads = [
       title: 'Because Somewhere Deep, She Knew',
       className: 'closing',
       blocks: [{ type: 'quote', text: 'The Luminous World Was Still Alive.' }],
-      footer: 'Turn once more and the dream begins again',
+      footer: 'New world, new dream',
     },
   },
 ]
@@ -444,7 +443,7 @@ function App() {
     const music = new Audio(soundtrack[0])
 
     music.preload = 'auto'
-    music.volume = 0.3
+    music.volume = 0.25
     musicAudioRef.current = music
     soundtrackIndexRef.current = 0
 
@@ -461,7 +460,7 @@ function App() {
         return
       }
 
-      currentMusic.volume = 0.3
+      currentMusic.volume = 0.25
 
       const playPromise = currentMusic.play()
 
@@ -533,8 +532,8 @@ function App() {
   }
 
   function handleBookFlip(event) {
-    setCurrentPage(event.data)
     playFlipNoise()
+    setCurrentPage(event.data)
   }
 
   function handleBookInit(event) {
