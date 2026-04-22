@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import backgroundPandora from './assets/BackgroundPandora.png'
+import bushes1 from './assets/Bushes1.png'
+import bushes2 from './assets/Bushes2.png'
 import './App.css'
 
 const MotionMain = motion.main
@@ -16,21 +19,21 @@ const pageSpreads = [
       eyebrow: 'Page One',
       title: 'Happy Birthday, Ava.',
       body: 'If a whole world could gather itself into a feeling, it would look something like this: luminous, cinematic, and quietly full of wonder the second you arrive.',
-      footer: 'Click anywhere on the book to turn the page',
+      footer: 'Click the right page to move forward',
     },
   },
   {
     left: {
       eyebrow: 'Bioluminescent Grove',
       title: 'Everything is glowing on purpose.',
-      body: 'The floating spores, the rivers of blue light, the towering silhouettes, and the warm bloom drifting through the leaves. It all feels like the kind of magic that only shows up when someone special walks in.',
-      footer: 'Some nights feel larger than themselves',
+      body: 'The floating spores, the rivers of blue light, and the violet flare around every fern make the whole place feel alive enough to celebrate with you.',
+      footer: 'Click the left page to go back',
     },
     right: {
       eyebrow: 'Birthday Wish',
       title: 'I hope this year feels cinematic.',
       body: 'Not just busy, not just full, but vivid. More adventures worth remembering, more laughter that arrives fast, and more moments that make you stop and think, yes, this is exactly my life.',
-      footer: 'Turn again',
+      footer: 'Right page keeps the story moving',
     },
   },
   {
@@ -44,7 +47,7 @@ const pageSpreads = [
       eyebrow: 'For Ava',
       title: 'You make bright things brighter.',
       body: 'So this page, this night forest, and this impossible little moonlit world are all here to do one simple job: celebrate you with as much atmosphere as possible.',
-      footer: 'One more page',
+      footer: 'Turn either way from here',
     },
   },
   {
@@ -57,8 +60,8 @@ const pageSpreads = [
     right: {
       eyebrow: 'Encore',
       title: 'And if you want, the whole night can begin again.',
-      body: 'One more click restarts the pages, like opening the book beneath the glowing canopy all over again.',
-      footer: 'Click to loop back to the beginning',
+      body: 'One more right-page turn loops back to the beginning, and one left-page turn lets you revisit the spread just before this one.',
+      footer: 'The book now flips both directions',
     },
   },
 ]
@@ -81,53 +84,42 @@ const stars = [
 ]
 
 const motes = [
-  { left: '9%', bottom: '18%', size: '16px', delay: '0s', duration: '10s' },
-  { left: '17%', bottom: '24%', size: '12px', delay: '2.2s', duration: '8.8s' },
-  { left: '29%', bottom: '16%', size: '18px', delay: '1.2s', duration: '10.6s' },
-  { left: '42%', bottom: '22%', size: '14px', delay: '3.1s', duration: '9.4s' },
-  { left: '56%', bottom: '13%', size: '20px', delay: '2.7s', duration: '11.2s' },
-  { left: '68%', bottom: '19%', size: '12px', delay: '1.7s', duration: '8.4s' },
-  { left: '80%', bottom: '16%', size: '17px', delay: '0.8s', duration: '9.8s' },
-  { left: '91%', bottom: '26%', size: '13px', delay: '2.9s', duration: '8.9s' },
+  { left: '10%', top: '34%', size: '14px', delay: '0.3s', duration: '11s' },
+  { left: '19%', top: '68%', size: '11px', delay: '1.4s', duration: '9.4s' },
+  { left: '30%', top: '56%', size: '16px', delay: '2.2s', duration: '12.2s' },
+  { left: '42%', top: '72%', size: '13px', delay: '0.7s', duration: '10s' },
+  { left: '57%', top: '64%', size: '18px', delay: '2.8s', duration: '10.8s' },
+  { left: '70%', top: '38%', size: '12px', delay: '1.1s', duration: '8.9s' },
+  { left: '82%', top: '58%', size: '15px', delay: '2.5s', duration: '9.7s' },
+  { left: '90%', top: '74%', size: '11px', delay: '1.9s', duration: '8.8s' },
 ]
 
-const trunks = [
-  { left: '0%', width: '16%', height: '72%', rotate: '-4deg', delay: '0.1s' },
-  { left: '14%', width: '11%', height: '56%', rotate: '5deg', delay: '0.35s' },
-  { left: '73%', width: '13%', height: '60%', rotate: '-4deg', delay: '0.2s' },
-  { left: '86%', width: '16%', height: '78%', rotate: '5deg', delay: '0.45s' },
+const vines = [
+  { left: '8%', top: '-5%', height: '58%', rotate: '-3deg', delay: '0s', duration: '11s' },
+  { left: '17%', top: '-8%', height: '62%', rotate: '4deg', delay: '1.2s', duration: '12.6s' },
+  { left: '28%', top: '-6%', height: '56%', rotate: '-5deg', delay: '0.8s', duration: '10.8s' },
+  { left: '63%', top: '-9%', height: '52%', rotate: '5deg', delay: '0.6s', duration: '11.4s' },
+  { left: '74%', top: '-5%', height: '60%', rotate: '-4deg', delay: '1.1s', duration: '10.4s' },
+  { left: '86%', top: '-8%', height: '66%', rotate: '6deg', delay: '2.2s', duration: '12.8s' },
 ]
 
-const fronds = [
-  { left: '0%', width: '18%', height: '40%', rotate: '-14deg', delay: '0s', duration: '9s' },
-  { left: '9%', width: '15%', height: '31%', rotate: '9deg', delay: '1.2s', duration: '8.4s' },
-  { left: '18%', width: '20%', height: '35%', rotate: '-8deg', delay: '0.8s', duration: '8.8s' },
-  { left: '68%', width: '17%', height: '30%', rotate: '12deg', delay: '0.5s', duration: '7.8s' },
-  { left: '78%', width: '19%', height: '38%', rotate: '-10deg', delay: '1.8s', duration: '8.6s' },
-  { left: '89%', width: '15%', height: '33%', rotate: '14deg', delay: '0.9s', duration: '8.1s' },
+const leafBurstParticles = [
+  { x: -138, y: -78, size: 14, delay: 0.02, rotate: -34, hue: 'purple' },
+  { x: -110, y: -122, size: 18, delay: 0.08, rotate: -8, hue: 'blue' },
+  { x: -88, y: -58, size: 12, delay: 0.12, rotate: 20, hue: 'purple' },
+  { x: -54, y: -132, size: 14, delay: 0.18, rotate: -14, hue: 'blue' },
+  { x: -18, y: -92, size: 10, delay: 0.24, rotate: 28, hue: 'purple' },
+  { x: 16, y: -144, size: 15, delay: 0.1, rotate: -18, hue: 'blue' },
+  { x: 46, y: -76, size: 12, delay: 0.16, rotate: 34, hue: 'purple' },
+  { x: 82, y: -128, size: 14, delay: 0.22, rotate: -26, hue: 'blue' },
+  { x: 116, y: -84, size: 13, delay: 0.28, rotate: 16, hue: 'purple' },
+  { x: 142, y: -118, size: 17, delay: 0.34, rotate: -10, hue: 'blue' },
+  { x: -66, y: -170, size: 11, delay: 0.36, rotate: 12, hue: 'purple' },
+  { x: 74, y: -176, size: 10, delay: 0.4, rotate: -20, hue: 'blue' },
 ]
 
-const canopyBlooms = [
-  { left: '62%', top: '11%', width: '224px', height: '90px', delay: '0s', duration: '9.8s' },
-  { left: '76%', top: '3%', width: '254px', height: '102px', delay: '1.5s', duration: '10.6s' },
-  { left: '54%', top: '20%', width: '140px', height: '58px', delay: '0.8s', duration: '8.7s' },
-  { left: '25%', top: '22%', width: '128px', height: '54px', delay: '2s', duration: '8.9s' },
-  { left: '84%', top: '36%', width: '116px', height: '48px', delay: '1.1s', duration: '9.1s' },
-  { left: '46%', top: '58%', width: '92px', height: '40px', delay: '0.4s', duration: '7.9s' },
-]
-
-const hangingVines = [
-  { left: '8%', top: '-5%', height: '56%', rotate: '-3deg', delay: '0s', duration: '11s' },
-  { left: '15%', top: '-8%', height: '65%', rotate: '4deg', delay: '1.4s', duration: '12.6s' },
-  { left: '24%', top: '-6%', height: '60%', rotate: '-5deg', delay: '0.8s', duration: '10.8s' },
-  { left: '33%', top: '-3%', height: '48%', rotate: '2deg', delay: '1.8s', duration: '9.8s' },
-  { left: '60%', top: '-9%', height: '50%', rotate: '5deg', delay: '0.6s', duration: '11.4s' },
-  { left: '71%', top: '-5%', height: '58%', rotate: '-4deg', delay: '1.1s', duration: '10.4s' },
-  { left: '81%', top: '-8%', height: '67%', rotate: '6deg', delay: '2.2s', duration: '12.8s' },
-  { left: '90%', top: '-4%', height: '54%', rotate: '-3deg', delay: '1.6s', duration: '10.2s' },
-]
-
-const turnNotes = [523.25, 659.25, 783.99]
+const turnNotesForward = [523.25, 659.25, 783.99]
+const turnNotesBackward = [...turnNotesForward].reverse()
 
 function playTone(context, frequency, startAt, duration = 0.22) {
   const oscillator = context.createOscillator()
@@ -144,6 +136,166 @@ function playTone(context, frequency, startAt, duration = 0.22) {
   gain.connect(context.destination)
   oscillator.start(startAt)
   oscillator.stop(startAt + duration)
+}
+
+function RippleSurface() {
+  const canvasRef = useRef(null)
+  const ripplesRef = useRef([])
+  const frameRef = useRef(0)
+  const draggingRef = useRef(false)
+  const lastSpawnRef = useRef(0)
+  const paletteIndexRef = useRef(0)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+
+    if (!canvas) {
+      return undefined
+    }
+
+    const context = canvas.getContext('2d')
+
+    if (!context) {
+      return undefined
+    }
+
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1
+      const { clientWidth, clientHeight } = canvas
+
+      canvas.width = Math.max(1, Math.floor(clientWidth * dpr))
+      canvas.height = Math.max(1, Math.floor(clientHeight * dpr))
+      context.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+
+    function drawFrame() {
+      const width = canvas.clientWidth
+      const height = canvas.clientHeight
+
+      context.clearRect(0, 0, width, height)
+      context.globalCompositeOperation = 'lighter'
+
+      ripplesRef.current = ripplesRef.current.filter((ripple) => ripple.alpha > 0.012)
+
+      ripplesRef.current.forEach((ripple) => {
+        ripple.radius += ripple.velocity
+        ripple.alpha *= 0.964
+        ripple.velocity *= 0.996
+
+        const glow = context.createRadialGradient(
+          ripple.x,
+          ripple.y,
+          ripple.radius * 0.08,
+          ripple.x,
+          ripple.y,
+          ripple.radius,
+        )
+
+        glow.addColorStop(0, `rgba(${ripple.core}, ${Math.min(ripple.alpha * 1.4, 0.28)})`)
+        glow.addColorStop(0.34, `rgba(${ripple.edge}, ${ripple.alpha * 0.5})`)
+        glow.addColorStop(0.82, `rgba(${ripple.edge}, 0)`)
+
+        context.fillStyle = glow
+        context.beginPath()
+        context.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2)
+        context.fill()
+
+        context.strokeStyle = `rgba(${ripple.core}, ${ripple.alpha * 0.28})`
+        context.lineWidth = Math.max(1, ripple.radius * 0.015)
+        context.beginPath()
+        context.arc(ripple.x, ripple.y, ripple.radius * 0.78, 0, Math.PI * 2)
+        context.stroke()
+      })
+
+      context.globalCompositeOperation = 'source-over'
+      frameRef.current = window.requestAnimationFrame(drawFrame)
+    }
+
+    resizeCanvas()
+    frameRef.current = window.requestAnimationFrame(drawFrame)
+    window.addEventListener('resize', resizeCanvas)
+
+    return () => {
+      window.cancelAnimationFrame(frameRef.current)
+      window.removeEventListener('resize', resizeCanvas)
+    }
+  }, [])
+
+  function spawnRipple(event, strength = 1) {
+    const canvas = canvasRef.current
+
+    if (!canvas) {
+      return
+    }
+
+    const rect = canvas.getBoundingClientRect()
+    const palette = [
+      { core: '176, 98, 255', edge: '88, 222, 255' },
+      { core: '255, 108, 235', edge: '92, 229, 255' },
+      { core: '138, 115, 255', edge: '74, 197, 255' },
+    ]
+    const selected = palette[paletteIndexRef.current % palette.length]
+
+    paletteIndexRef.current += 1
+
+    ripplesRef.current.push({
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+      radius: 22 + strength * 18,
+      alpha: 0.14 + strength * 0.08,
+      velocity: 2.4 + strength * 1.5,
+      core: selected.core,
+      edge: selected.edge,
+    })
+
+    if (ripplesRef.current.length > 24) {
+      ripplesRef.current.splice(0, ripplesRef.current.length - 24)
+    }
+  }
+
+  function handlePointerDown(event) {
+    draggingRef.current = true
+    lastSpawnRef.current = performance.now()
+    event.currentTarget.setPointerCapture?.(event.pointerId)
+    spawnRipple(event, 1.1)
+  }
+
+  function handlePointerMove(event) {
+    if (!draggingRef.current) {
+      return
+    }
+
+    const now = performance.now()
+
+    if (now - lastSpawnRef.current < 42) {
+      return
+    }
+
+    lastSpawnRef.current = now
+    spawnRipple(event, 0.8)
+  }
+
+  function stopDragging(event) {
+    draggingRef.current = false
+
+    if (event?.currentTarget?.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+  }
+
+  return (
+    <div className="ripple-layer" aria-hidden="true">
+      <canvas ref={canvasRef} className="ripple-canvas"></canvas>
+      <div
+        className="ripple-hit-surface"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={stopDragging}
+        onPointerCancel={stopDragging}
+        onPointerLeave={stopDragging}
+      ></div>
+    </div>
+  )
 }
 
 function PaperSide({ page, side, countText }) {
@@ -165,25 +317,56 @@ function App() {
   const [bookOpen, setBookOpen] = useState(false)
   const [pageIndex, setPageIndex] = useState(0)
   const [turningPage, setTurningPage] = useState(false)
+  const [turnDirection, setTurnDirection] = useState('forward')
   const [turnToken, setTurnToken] = useState(0)
   const audioContextRef = useRef(null)
+  const storybookShellRef = useRef(null)
 
-  const currentSpread = pageSpreads[pageIndex]
-  const nextIndex = (pageIndex + 1) % pageSpreads.length
-  const nextSpread = pageSpreads[nextIndex]
   const pageCountLabel = `${String(pageIndex + 1).padStart(2, '0')} / ${String(
     pageSpreads.length,
   ).padStart(2, '0')}`
+  const currentSpread = pageSpreads[pageIndex]
+  const nextIndex = (pageIndex + 1) % pageSpreads.length
+  const previousIndex = (pageIndex - 1 + pageSpreads.length) % pageSpreads.length
+  const nextSpread = pageSpreads[nextIndex]
+  const previousSpread = pageSpreads[previousIndex]
 
   useEffect(() => {
-    const showBookTimer = window.setTimeout(() => setBookVisible(true), 1150)
-    const openBookTimer = window.setTimeout(() => setBookOpen(true), 2200)
+    const showBookTimer = window.setTimeout(() => setBookVisible(true), 1050)
+    const openBookTimer = window.setTimeout(() => setBookOpen(true), 2080)
 
     return () => {
       window.clearTimeout(showBookTimer)
       window.clearTimeout(openBookTimer)
     }
   }, [])
+
+  function setBookPose(normalizedX, normalizedY) {
+    const shell = storybookShellRef.current
+
+    if (!shell) {
+      return
+    }
+
+    shell.style.setProperty('--book-tilt-x', `${(-normalizedY * 8).toFixed(2)}deg`)
+    shell.style.setProperty('--book-tilt-y', `${(normalizedX * 10).toFixed(2)}deg`)
+    shell.style.setProperty('--book-shift-x-sm', `${(normalizedX * 8).toFixed(2)}px`)
+    shell.style.setProperty('--book-shift-y-sm', `${(normalizedY * 6).toFixed(2)}px`)
+    shell.style.setProperty('--book-shift-x-md', `${(normalizedX * 14).toFixed(2)}px`)
+    shell.style.setProperty('--book-shift-y-md', `${(normalizedY * 10).toFixed(2)}px`)
+  }
+
+  function resetBookPose() {
+    setBookPose(0, 0)
+  }
+
+  function handleBookPointerMove(event) {
+    const rect = event.currentTarget.getBoundingClientRect()
+    const normalizedX = ((event.clientX - rect.left) / rect.width) * 2 - 1
+    const normalizedY = ((event.clientY - rect.top) / rect.height) * 2 - 1
+
+    setBookPose(normalizedX, normalizedY)
+  }
 
   async function ensureAudioContext() {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext
@@ -217,28 +400,35 @@ function App() {
     })
   }
 
-  async function handleTurnPage() {
+  async function handleTurnPage(direction) {
     if (!bookOpen || turningPage) {
       return
     }
 
+    const targetIndex = direction === 'forward' ? nextIndex : previousIndex
     const isReady = await ensureAudioContext()
 
+    setTurnDirection(direction)
     setTurningPage(true)
     setTurnToken((token) => token + 1)
 
     window.setTimeout(() => {
-      setPageIndex(nextIndex)
-    }, 340)
+      setPageIndex(targetIndex)
+    }, 360)
 
     window.setTimeout(() => {
       setTurningPage(false)
-    }, 920)
+    }, 940)
 
     if (isReady) {
-      playSequence(turnNotes)
+      playSequence(direction === 'forward' ? turnNotesForward : turnNotesBackward)
     }
   }
+
+  const turningFrontPage =
+    turnDirection === 'forward' ? currentSpread.right : currentSpread.left
+  const turningBackPage =
+    turnDirection === 'forward' ? nextSpread.left : previousSpread.right
 
   return (
     <MotionMain
@@ -248,10 +438,20 @@ function App() {
       transition={{ duration: 0.9, ease: 'easeOut' }}
     >
       <div className="night-gradient" aria-hidden="true"></div>
-      <div className="upper-haze upper-haze-left" aria-hidden="true"></div>
-      <div className="upper-haze upper-haze-right" aria-hidden="true"></div>
 
       <section className="scene-backdrop" aria-hidden="true">
+        <motion.img
+          className="pandora-backdrop"
+          src={backgroundPandora}
+          alt=""
+          draggable={false}
+          initial={{ opacity: 0, scale: 1.08, y: 28 }}
+          animate={{ opacity: 1, scale: 1.02, y: 0 }}
+          transition={{ duration: 1.6, ease: [0.2, 0.85, 0.25, 1] }}
+        />
+
+        <div className="backdrop-veil"></div>
+
         <div className="starfield">
           {stars.map((star) => (
             <span
@@ -268,28 +468,10 @@ function App() {
           ))}
         </div>
 
-        <div className="canopy-bloom-layer">
-          {canopyBlooms.map((bloom) => (
-            <span
-              key={`${bloom.left}-${bloom.top}`}
-              className="scene-bloom"
-              style={{
-                '--bloom-left': bloom.left,
-                '--bloom-top': bloom.top,
-                '--bloom-width': bloom.width,
-                '--bloom-height': bloom.height,
-                '--bloom-delay': bloom.delay,
-                '--bloom-duration': bloom.duration,
-              }}
-            >
-              <span className="scene-bloom-core"></span>
-              <span className="scene-bloom-tassels"></span>
-            </span>
-          ))}
-        </div>
+        <RippleSurface />
 
-        <div className="vine-curtain">
-          {hangingVines.map((vine) => (
+        <div className="vine-layer">
+          {vines.map((vine) => (
             <span
               key={`${vine.left}-${vine.height}`}
               className="scene-vine"
@@ -305,35 +487,53 @@ function App() {
           ))}
         </div>
 
-        <div className="light-columns">
-          <span className="light-column light-column-one"></span>
-          <span className="light-column light-column-two"></span>
-          <span className="light-column light-column-three"></span>
-        </div>
+        <motion.img
+          className="bush-layer bush-layer-one"
+          src={bushes1}
+          alt=""
+          draggable={false}
+          initial={{ opacity: 0, y: 170, scale: 0.92 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1.25, delay: 0.86, ease: [0.2, 0.9, 0.22, 1] }}
+        />
 
-        <div className="mist mist-back"></div>
+        <motion.img
+          className="bush-layer bush-layer-two"
+          src={bushes2}
+          alt=""
+          draggable={false}
+          initial={{ opacity: 0, y: 210, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1.35, delay: 1.06, ease: [0.2, 0.9, 0.22, 1] }}
+        />
 
-        <div className="bridge-layer">
-          <span className="bridge-ridge"></span>
-          <span className="bridge-root bridge-root-one"></span>
-          <span className="bridge-root bridge-root-two"></span>
-          <span className="bridge-root bridge-root-three"></span>
-          <span className="bridge-hanging bridge-hanging-one"></span>
-          <span className="bridge-hanging bridge-hanging-two"></span>
-          <span className="bridge-hanging bridge-hanging-three"></span>
-        </div>
-
-        <div className="trunk-layer">
-          {trunks.map((trunk) => (
+        <div className="bush-burst bush-burst-one">
+          {leafBurstParticles.map((particle, index) => (
             <span
-              key={`${trunk.left}-${trunk.height}`}
-              className="scene-trunk"
+              key={`burst-left-${index}`}
+              className={`leaf-burst leaf-burst-${particle.hue}`}
               style={{
-                '--trunk-left': trunk.left,
-                '--trunk-width': trunk.width,
-                '--trunk-height': trunk.height,
-                '--trunk-rotate': trunk.rotate,
-                '--trunk-delay': trunk.delay,
+                '--leaf-x': `${particle.x}px`,
+                '--leaf-y': `${particle.y}px`,
+                '--leaf-size': `${particle.size}px`,
+                '--leaf-delay': `${particle.delay}s`,
+                '--leaf-rotate': `${particle.rotate}deg`,
+              }}
+            ></span>
+          ))}
+        </div>
+
+        <div className="bush-burst bush-burst-two">
+          {leafBurstParticles.map((particle, index) => (
+            <span
+              key={`burst-right-${index}`}
+              className={`leaf-burst leaf-burst-${particle.hue}`}
+              style={{
+                '--leaf-x': `${particle.x * 0.88}px`,
+                '--leaf-y': `${particle.y * 0.92}px`,
+                '--leaf-size': `${particle.size}px`,
+                '--leaf-delay': `${particle.delay + 0.14}s`,
+                '--leaf-rotate': `${particle.rotate * -1}deg`,
               }}
             ></span>
           ))}
@@ -342,11 +542,11 @@ function App() {
         <div className="mote-layer">
           {motes.map((mote) => (
             <span
-              key={`${mote.left}-${mote.bottom}`}
+              key={`${mote.left}-${mote.top}`}
               className="scene-mote"
               style={{
                 '--mote-left': mote.left,
-                '--mote-bottom': mote.bottom,
+                '--mote-top': mote.top,
                 '--mote-size': mote.size,
                 '--mote-delay': mote.delay,
                 '--mote-duration': mote.duration,
@@ -355,102 +555,103 @@ function App() {
           ))}
         </div>
 
+        <div className="mist mist-back"></div>
         <div className="mist mist-front"></div>
-
-        <div className="frond-layer">
-          {fronds.map((frond) => (
-            <span
-              key={`${frond.left}-${frond.height}`}
-              className="scene-frond"
-              style={{
-                '--frond-left': frond.left,
-                '--frond-width': frond.width,
-                '--frond-height': frond.height,
-                '--frond-rotate': frond.rotate,
-                '--frond-delay': frond.delay,
-                '--frond-duration': frond.duration,
-              }}
-            ></span>
-          ))}
-        </div>
-
-        <div className="forest-floor"></div>
       </section>
 
       <AnimatePresence>
         {bookVisible ? (
           <motion.section
             className="book-zone"
-            initial={{ opacity: 0, y: 120, scale: 0.9 }}
+            initial={{ opacity: 0, y: 120, scale: 0.88 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 1.1, ease: [0.2, 0.9, 0.2, 1] }}
+            transition={{ duration: 1.12, ease: [0.2, 0.9, 0.2, 1] }}
           >
             <div className="book-aura" aria-hidden="true"></div>
             <div className="book-stack-shadow" aria-hidden="true"></div>
 
-            <div className="storybook">
-              <div className="storybook-back" aria-hidden="true"></div>
+            <div
+              ref={storybookShellRef}
+              className="storybook-shell"
+              onPointerMove={handleBookPointerMove}
+              onPointerLeave={resetBookPose}
+            >
+              <div className="storybook">
+                <div className="storybook-back" aria-hidden="true"></div>
 
-              <div className="storybook-pages">
-                <div className="paper-spread">
-                  <PaperSide page={currentSpread.left} side="left" />
-                  <div className="paper-spine" aria-hidden="true"></div>
-                  <PaperSide
-                    page={currentSpread.right}
-                    side="right"
-                    countText={pageCountLabel}
-                  />
+                <div className="storybook-pages">
+                  <div className="paper-spread">
+                    <PaperSide page={currentSpread.left} side="left" />
+                    <div className="paper-spine" aria-hidden="true"></div>
+                    <PaperSide
+                      page={currentSpread.right}
+                      side="right"
+                      countText={pageCountLabel}
+                    />
+                  </div>
+
+                  <AnimatePresence initial={false}>
+                    {turningPage ? (
+                      <motion.div
+                        key={turnToken}
+                        className={`page-turn-sheet page-turn-sheet-${turnDirection}`}
+                        initial={{ rotateY: 0 }}
+                        animate={{ rotateY: turnDirection === 'forward' ? -178 : 178 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.92, ease: [0.35, 0.02, 0.2, 1] }}
+                      >
+                        <div className="page-turn-face page-turn-front">
+                          <p className="page-turn-label">{turningFrontPage.eyebrow}</p>
+                          <p className="page-turn-title">{turningFrontPage.title}</p>
+                          <div className="page-turn-glow"></div>
+                        </div>
+                        <div className="page-turn-face page-turn-back">
+                          <p className="page-turn-label">{turningBackPage.eyebrow}</p>
+                          <p className="page-turn-title">{turningBackPage.title}</p>
+                          <div className="page-turn-glow"></div>
+                        </div>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+
+                  <button
+                    type="button"
+                    className="book-hitarea book-hitarea-left"
+                    onClick={() => handleTurnPage('backward')}
+                    disabled={!bookOpen || turningPage}
+                    aria-label="Turn the book backward"
+                  >
+                    <span className="sr-only">Turn the book backward</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="book-hitarea book-hitarea-right"
+                    onClick={() => handleTurnPage('forward')}
+                    disabled={!bookOpen || turningPage}
+                    aria-label="Turn the book forward"
+                  >
+                    <span className="sr-only">Turn the book forward</span>
+                  </button>
                 </div>
 
-                <AnimatePresence initial={false}>
-                  {turningPage ? (
-                    <motion.div
-                      key={turnToken}
-                      className="page-turn-sheet"
-                      initial={{ rotateY: 0 }}
-                      animate={{ rotateY: -178 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.92, ease: [0.35, 0.02, 0.2, 1] }}
-                    >
-                      <div className="page-turn-face page-turn-front">
-                        <p className="page-turn-label">{currentSpread.right.eyebrow}</p>
-                        <div className="page-turn-glow"></div>
-                      </div>
-                      <div className="page-turn-face page-turn-back">
-                        <p className="page-turn-label">{nextSpread.left.eyebrow}</p>
-                        <div className="page-turn-glow"></div>
-                      </div>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-
-                <button
-                  type="button"
-                  className="book-hitarea"
-                  onClick={handleTurnPage}
-                  disabled={!bookOpen || turningPage}
-                  aria-label="Turn the page"
+                <motion.div
+                  className={`storybook-cover ${bookOpen ? 'is-open' : ''}`}
+                  initial={false}
+                  animate={{ rotateY: bookOpen ? -166 : 0 }}
+                  transition={{ duration: 1.35, ease: [0.2, 0.9, 0.2, 1] }}
                 >
-                  <span className="sr-only">Turn the page</span>
-                </button>
+                  <div className="cover-glow"></div>
+                  <div className="cover-rings"></div>
+                  <p className="cover-kicker">Ava&apos;s Birthday Journal</p>
+                  <p className="cover-name">AVA</p>
+                  <p className="cover-date">April 25, 2026</p>
+                  <p className="cover-copy">
+                    Opened beneath a glowing canopy where the night never stops
+                    shimmering.
+                  </p>
+                </motion.div>
               </div>
-
-              <motion.div
-                className={`storybook-cover ${bookOpen ? 'is-open' : ''}`}
-                initial={false}
-                animate={{ rotateY: bookOpen ? -166 : 0 }}
-                transition={{ duration: 1.35, ease: [0.2, 0.9, 0.2, 1] }}
-              >
-                <div className="cover-glow"></div>
-                <div className="cover-rings"></div>
-                <p className="cover-kicker">Ava&apos;s Birthday Journal</p>
-                <p className="cover-name">AVA</p>
-                <p className="cover-date">April 25, 2026</p>
-                <p className="cover-copy">
-                  Opened beneath a glowing canopy where the night never stops
-                  shimmering.
-                </p>
-              </motion.div>
             </div>
           </motion.section>
         ) : null}
